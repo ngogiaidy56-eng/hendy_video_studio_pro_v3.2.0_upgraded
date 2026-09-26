@@ -2,7 +2,14 @@
   "name": "hendy-video-studio-pro",
   "private": true,
   "version": "2.4.0",
-  "workspaces": ["system-config", "backend", "worker", "frontend", "example_bot", "mcp/cloudflare"],
+  "workspaces": [
+    "system-config",
+    "backend",
+    "worker",
+    "frontend",
+    "example_bot",
+    "mcp/cloudflare"
+  ],
   "scripts": {
     "config:validate": "node system-config/scripts/validate-config.mjs",
     "config:sync": "node system-config/scripts/sync-config.mjs",
@@ -10,6 +17,21 @@
     "dev": "npm run config:sync && npm --workspace frontend run dev",
     "build": "npm run config:validate && npm run config:sync && npm --workspace frontend run build && npm --workspace backend run build && npm --workspace worker run build",
     "typecheck": "npm --workspace backend run typecheck && npm --workspace worker run typecheck && npm --workspace frontend run typecheck && npm --workspace mcp/cloudflare run typecheck",
-    "mcp": "npm --workspace mcp/cloudflare run dev"
+    "mcp": "npm --workspace mcp/cloudflare run dev",
+    
+    "system:install": "npm install && npm run typecheck",
+    
+    "cloudflare:push-env": "node system-config/scripts/push-env-to-cf.mjs",
+    
+    "deploy:pages": "wrangler pages deploy frontend/dist --project-name=capcut-vietsub-studio --production",
+    
+    "deploy:worker": "cd worker && wrangler deploy",
+    
+    "deploy:bot": "cd example_bot && tgcloud deploy",
+    
+    "deploy:all": "npm run system:install && npm run build && npm run cloudflare:push-env && npm run deploy:pages && npm run deploy:worker"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.1"
   }
 }
