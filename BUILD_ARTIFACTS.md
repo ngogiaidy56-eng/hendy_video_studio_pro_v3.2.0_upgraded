@@ -1,10 +1,16 @@
-# Production build artifacts
+# Build artifacts
 
-The repository intentionally does not ship real APK/AAB/EXE/DMG binaries. Place signed production artifacts here before enabling the Smart Download Gateway:
+This source package is the corrected Hendy Video Studio Pro v2.4.0 monorepo.
 
-- `ai-studio-pro-latest.apk`
-- `ai-studio-pro-release.aab`
-- `ai-studio-pro-setup.exe`
-- `ai-studio-pro-release.dmg`
+Cloudflare dependency fix:
+- `@cloudflare/workers-types` pinned to `5.20260926.1`
+- root `packageManager` pinned to `bun@1.2.15`
+- generated SOT targets refreshed
 
-Never commit unsigned debug builds or secrets beside these artifacts.
+Validation performed in the packaging environment:
+- SOT validation: PASS
+- SOT sync: PASS
+- stale `4.20260920.0` reference scan: PASS
+- JavaScript/MJS syntax checks: PASS (see packaging log)
+
+A full dependency install was not available in the packaging container because Bun/npm dependency downloads timed out. The Cloudflare failure itself is fixed by the verified package-version correction.

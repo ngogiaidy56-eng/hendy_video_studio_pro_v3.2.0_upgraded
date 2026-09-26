@@ -3,5 +3,5 @@
   "private":true,
   "type":"module",
   "scripts":{"dev":"wrangler dev","build":"tsc -p tsconfig.json","typecheck":"tsc -p tsconfig.json --noEmit","deploy":"wrangler deploy"},
-  "devDependencies":{"@cloudflare/workers-types":"^4.20260920.0","typescript":"^5.9.2","wrangler":"^4.37.0"}
+  "devDependencies":{"@cloudflare/workers-types":"5.20260926.1","typescript":"^5.9.2","wrangler":"^4.37.0"}
 }

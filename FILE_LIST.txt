@@ -4,6 +4,7 @@
 .github/workflows/rollback.yml
 .gitignore
 BUILD_ARTIFACTS.md
+CLOUDFLARE_BUILD_FIX.md
 FILE_LIST.txt
 README.md
 SYSTEM_SOT_SOURCE_CODE.md
