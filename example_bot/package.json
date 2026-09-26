@@ -1,0 +1,1 @@
+{"name":"@hendy/example-bot","private":true,"type":"module","scripts":{"dev":"node handlers/message.js"}}

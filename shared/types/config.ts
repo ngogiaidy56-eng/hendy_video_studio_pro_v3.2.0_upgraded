@@ -1,0 +1,1 @@
+export type SystemConfig={system:{name:string;version:string;environment:string};network:Record<string,number|string>;features:Record<string,boolean>;ai:{provider:string;models:Record<string,string>;temperature:number};storage:Record<string,unknown>;editor:{audioChannels:string[];duckingGain:number;transitionGapSeconds:number};theme:Record<string,string>;managedFiles:string[]};

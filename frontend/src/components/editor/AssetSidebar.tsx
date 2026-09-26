@@ -1,0 +1,2 @@
+import {useRef} from 'react';
+export function AssetSidebar({onUpload}:{onUpload:(file:File)=>void}){const ref=useRef<HTMLInputElement>(null);return <section className="panel stack"><strong>Assets</strong><button className="button primary" onClick={()=>ref.current?.click()}>Upload media</button><input ref={ref} hidden type="file" accept="video/*,audio/*,image/*" onChange={e=>{const f=e.target.files?.[0];if(f)onUpload(f)}}/><div className="muted">Kéo thả video, audio hoặc ảnh. Backend sẽ đưa asset vào R2.</div></section>}

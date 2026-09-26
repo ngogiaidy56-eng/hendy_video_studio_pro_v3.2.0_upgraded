@@ -1,0 +1,8 @@
+{
+  "name": "hendy-video-studio-pro-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-27",
+  "vars": {
+    "API_BASE_PATH": "/api/v1"
+  }
+}

@@ -1,0 +1,2 @@
+import type {Clip} from '../../types/project';
+export function Timeline({clips}:{clips:Clip[]}){const duration=Math.max(...clips.map(c=>c.endMs),60000);return <section className="panel timeline"><div className="row"><strong>Timeline</strong><span className="muted">{Math.round(duration/1000)}s</span></div>{[0,1,2].map(track=><div className="track" key={track}>{clips.filter(c=>c.track===track).map(c=><div key={c.id} className="clip" style={{left:`${c.startMs/duration*100}%`,width:`${Math.max(1,(c.endMs-c.startMs)/duration*100)}%`}}>{c.label}</div>)}</div>)}</section>}

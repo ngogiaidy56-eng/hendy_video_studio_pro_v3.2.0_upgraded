@@ -1,0 +1,1 @@
+export function buildIncidentMarkdown({level='critical',message='unknown',sha='unknown'}={}){return [`🚨 *Hendy Video Studio Pro*`,`*Level:* ${level}`,`*Commit:* \`${sha}\``,`*Message:* ${message}`].join('\n');}

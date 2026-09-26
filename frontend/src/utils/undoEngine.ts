@@ -1,0 +1,5 @@
+const DB='hendy-studio';
+const STORE='snapshots';
+function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+export async function pushSnapshot(projectId:string,payload:unknown){const db=await openDb();return new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).add({projectId,payload,createdAt:Date.now()});tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+export async function popLatest(projectId:string){const db=await openDb();return new Promise<unknown>((resolve,reject)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).getAll();r.onsuccess=()=>{const rows=r.result.filter((x:any)=>x.projectId===projectId).sort((a:any,b:any)=>b.createdAt-a.createdAt);resolve(rows[0]?.payload ?? null)};r.onerror=()=>reject(r.error);});}
