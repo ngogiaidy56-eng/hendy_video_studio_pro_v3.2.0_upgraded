@@ -10,7 +10,7 @@ const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 function fail(message){console.error(`SOT validation failed: ${message}`);process.exit(1)}
 function isHex(v){return typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v)}
 function required(obj, keys, label){for(const k of keys)if(!(k in obj))fail(`${label}.${k} is required`)}
-required(config,['system','toolchain','network','features','ai','storage','editor','theme','managedFiles','cloudflareAI'],'root');
+required(config,['system','toolchain','network','features','ai','storage','editor','theme','managedFiles','cloudflareAI','publicAppUrl'],'root');
 required(config.toolchain,['workersTypes','wrangler'],'toolchain');
 if(!/^\d+\.\d{8}\.\d+$/.test(config.toolchain.workersTypes))fail('toolchain.workersTypes invalid date-version');
 if(!/^\d+\.\d+\.\d+$/.test(config.toolchain.wrangler))fail('toolchain.wrangler invalid semver');
@@ -38,5 +38,7 @@ for(const [k,v] of Object.entries(config.theme))if(!isHex(v))fail(`theme.${k} in
 if(!Array.isArray(config.managedFiles)||new Set(config.managedFiles).size!==config.managedFiles.length)fail('managedFiles must be unique array');
 
 // Sanity-check the schema file is present and is a JSON Schema document.
+if(typeof config.publicAppUrl!=='string'||!config.publicAppUrl.startsWith('https://'))fail('publicAppUrl must be an https URL');
+if(typeof config.storage.bucketName!=='string'||config.storage.bucketName.length<3)fail('storage.bucketName is required');
 if(schema.$schema?.includes('json-schema')!==true || schema.type!=='object') fail('schema/system-config.schema.json is not a valid object-schema document');
 console.log(`SOT valid: ${config.system.name} v${config.system.version}`);
