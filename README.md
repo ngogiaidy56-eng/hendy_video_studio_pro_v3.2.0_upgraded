@@ -34,7 +34,7 @@ Terminal khác:
 
 ```bash
 npm --workspace backend run dev
-npm --workspace worker run dev
+npm --workspace worker run dev  # Worker: http://localhost:8788
 npm --workspace frontend run dev
 npm --workspace mcp/cloudflare run dev
 ```
@@ -62,5 +62,12 @@ GitHub Actions thực hiện validate → sync → typecheck → build → healt
 - iOS: external TestFlight URL.
 
 ## AI
+Model mặc định: `gemini-3.8-flash`; TTS: `gemini-3.8-flash-tts`; fallback throughput TTS: `gemini-3.8-flash-lite-tts`. Cloudflare Worker TTS dùng model ID hiện hành `@cf/myshell-ai/melotts`.
 
-Model mặc định trong SOT là `gemini-2.5-flash`. Hệ thống coi model là cấu hình, không hard-code business logic.
+Editor AI endpoints gồm translation/STT/TTS/audio-mix/storyboard/Vietnamese enhancement.
+
+## Cloudflare Workers Types pin
+
+Cloudflare's `@cloudflare/workers-types` publishes date-based versions. The Worker package pins `5.20260926.1` because the previously generated Workers Types specifier no longer resolves in the Cloudflare build environment.
+
+Cloudflare recommends generating Worker binding types with `wrangler types` for new projects; this repository keeps the package for editor/type declarations and can migrate to generated `worker-configuration.d.ts` later.

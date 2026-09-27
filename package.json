@@ -17,7 +17,16 @@
     "dev": "npm run config:sync && npm --workspace frontend run dev",
     "build": "npm run config:validate && npm run config:sync && npm --workspace frontend run build && npm --workspace backend run build && npm --workspace worker run build",
     "typecheck": "npm --workspace backend run typecheck && npm --workspace worker run typecheck && npm --workspace frontend run typecheck && npm --workspace mcp/cloudflare run typecheck",
-    "mcp": "npm --workspace mcp/cloudflare run dev"
+    "mcp": "npm --workspace mcp/cloudflare run dev",
+    "editor:check": "npm --workspace frontend run typecheck",
+    "backend:check": "npm --workspace backend run typecheck",
+    "worker:check": "npm --workspace worker run typecheck",
+    "release:gate": "npm run config:validate && npm run config:sync && npm run typecheck && npm run build",
+    "source:export": "node system-config/scripts/export-source-md.mjs"
+  },
+  "engines": {
+    "node": ">=22 <25",
+    "bun": ">=1.2.15"
   },
   "packageManager": "bun@1.2.15"
 }
