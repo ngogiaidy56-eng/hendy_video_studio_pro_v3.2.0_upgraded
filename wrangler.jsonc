@@ -1,22 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "hendy-video-studio-pro",
-  "main": "frontend/src/edge.ts",
-  "compatibility_date": "2026-09-27",
-  "assets": {
-    "directory": "./frontend/dist",
-    "binding": "ASSETS",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": [
-      "/api/*", 
-      "/mcp/*", 
-      "/telegram/*"
-    ]
-  },
-  "services": [
-    {"binding": "BACKEND", "service": "hendy-video-studio-pro-backend"},
-    {"binding": "AI_EDGE", "service": "hendy-video-studio-pro-ai"},
-    {"binding": "MCP", "service": "hendy-video-studio-pro-mcp"},
-    {"binding": "TELEGRAM", "service": "hendy-video-studio-pro-telegram"}
-  ]
+  "name": "capcut-vietsub-studio",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-09-26"
 }

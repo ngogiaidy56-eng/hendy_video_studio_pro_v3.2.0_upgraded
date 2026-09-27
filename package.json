@@ -1,1 +1,38 @@
-{"name":"hendy-video-studio-pro","private":true,"version":"2.4.0","type":"module","workspaces":["system-config","backend","worker","frontend","example_bot","mcp/cloudflare"],"scripts":{"config:validate":"node system-config/scripts/validate-config.mjs","config:sync":"node system-config/scripts/sync-config.mjs","sandbox":"node system-config/sandbox/server.mjs","dev":"npm run config:sync && tsx server.ts","build":"npm run config:sync && npm --workspace frontend run build","start":"tsx server.ts","lint":"npm --workspace frontend run typecheck","typecheck":"npm --workspace frontend run typecheck"},"dependencies":{"cors":"^2.8.5","dotenv":"^17.2.2","express":"^5.1.0"},"devDependencies":{"@types/cors":"^2.8.19","@types/express":"^5.0.3","@types/node":"^24.4.0","tsx":"^4.20.5","typescript":"^5.9.2","vite":"^7.1.7"},"engines":{"node":">=22 <25"}}
+{
+  "name": "hendy-video-studio-pro",
+  "private": true,
+  "version": "2.4.0",
+  "type": "module",
+  "workspaces": ["system-config", "backend", "worker", "frontend", "example_bot", "mcp/cloudflare"],
+  "scripts": {
+    "config:validate": "node system-config/scripts/validate-config.mjs",
+    "config:sync": "node system-config/scripts/sync-config.mjs",
+    "sandbox": "node system-config/sandbox/server.mjs",
+    "dev": "npm run config:sync && tsx server.ts",
+    "build": "npm run config:sync && npm --workspace frontend run build",
+    "start": "tsx server.ts",
+    "lint": "npm --workspace frontend run typecheck",
+    "typecheck": "npm --workspace frontend run typecheck"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "lucide-react": "^1.48.0",
+    "tailwindcss": "^4.3.3",
+    "ws": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.4.0",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  },
+  "engines": {
+    "node": ">=22 <25"
+  }
+}

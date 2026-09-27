@@ -1,99 +1,94 @@
 {
-  "system": {
-    "name": "Hendy Video Studio Pro",
-    "version": "2.4.0",
-    "environment": "production"
+  "$schema": "./schema/system-config.schema.json",
+  "app": {
+    "name": "AI Studio Pro",
+    "shortName": "AI Studio Pro",
+    "product": "Video + Vietsub Workspace",
+    "version": "3.1.0",
+    "description": "AI video editor, Vietnamese subtitles, TTS voiceover and multi-channel audio studio.",
+    "language": "vi"
   },
-  "toolchain": {
-    "workersTypes": "5.20260926.1",
-    "wrangler": "4.137.0"
-  },
-  "network": {
-    "sandboxPort": 8799,
-    "backendPort": 8787,
-    "frontendPort": 5173,
-    "apiBasePath": "/api/v1",
-    "mcpPath": "/mcp",
-    "workerPort": 8788
-  },
-  "features": {
-    "enableMCP": true,
-    "enableLinkExtractor": true,
-    "enableImageOCR": true,
-    "enableAudioSTT": true,
-    "enableTelegramAdmin": true,
-    "enableOfflineFirst": true,
-    "enableAudioDucking": true
-  },
-  "ai": {
-    "provider": "google",
-    "models": {
-      "translation": "gemini-3.8-flash",
-      "ocr": "gemini-3.8-flash",
-      "stt": "gemini-3.8-flash",
-      "tts": "gemini-3.8-flash-tts",
-      "ttsLite": "gemini-3.8-flash-lite-tts",
-      "storyboard": "gemini-3.8-flash",
-      "audioMix": "gemini-3.8-flash",
-      "vietnamese": "gemini-3.8-flash"
+  "ui": {
+    "theme": {
+      "bg": "#070b12",
+      "panel": "#0c121c",
+      "panel2": "#0f1724",
+      "surface": "#121b2a",
+      "border": "rgba(148,163,184,0.12)",
+      "borderStrong": "rgba(148,163,184,0.20)",
+      "text": "#e6edf7",
+      "muted": "#8793a6",
+      "cyan": "#22d3ee",
+      "blue": "#4f7cff",
+      "purple": "#8b5cf6",
+      "success": "#34d399",
+      "warning": "#fbbf24",
+      "danger": "#fb7185"
     },
-    "temperature": 0.1
-  },
-  "storage": {
-    "provider": "cloudflare-r2",
-    "bucketEnv": "R2_BUCKET",
-    "zeroEgress": true,
-    "bucketName": "hendy-video-studio-pro-media",
-    "accountId": "918ff2f016938fc978ed23b96505b21e",
-    "endpoint": "https://918ff2f016938fc978ed23b96505b21e.r2.cloudflarestorage.com"
-  },
-  "editor": {
-    "audioChannels": [
-      "video",
-      "bgm",
-      "tts",
-      "master"
-    ],
-    "duckingGain": 0.2,
-    "transitionGapSeconds": 1.5,
-    "defaultWidth": 1280,
-    "defaultHeight": 720,
-    "defaultFps": 30,
-    "defaultSubtitleStyle": {
-      "fontFamily": "Arial",
-      "fontSize": 46,
-      "color": "#ffffff",
-      "strokeColor": "#000000",
-      "strokeWidth": 6,
-      "bottomPx": 52
+    "layout": {
+      "headerHeight": 60,
+      "workspaceGap": 8,
+      "panelRadius": 14,
+      "gridSize": 32
+    },
+    "status": {
+      "nominalLabel": "NOMINAL",
+      "nominalDescription": "Automated checks passed; ready for sync.",
+      "warningLabel": "WARNING",
+      "failedLabel": "FAILED"
     }
   },
-  "theme": {
-    "darkBackgroundColor": "#17171a",
-    "darkContainerBackgroundColor": "#232324",
-    "accentColor": "#ff8a00",
-    "textColor": "#f5f5f5"
+  "runtime": {
+    "sandbox": {
+      "host": "127.0.0.1",
+      "port": 8799,
+      "wsPath": "/ws",
+      "autoStartHint": true
+    },
+    "dev": {
+      "vitePort": 5173
+    },
+    "cloudflare": {
+      "pagesOutput": "./dist",
+      "compatibilityDate": "2026-09-26",
+      "workerName": "capcut-vietsub-studio"
+    }
   },
-  "managedFiles": [
-    "frontend/src/generated/system-config.ts",
-    "frontend/src/generated/system-env.ts",
-    "frontend/src/generated/system-theme.css",
-    "frontend/src/generated/system-layout.tsx",
-    "frontend/public/manifest.json",
-    "frontend/index.html",
-    "worker/wrangler.jsonc",
-    "worker/package.json",
-    "frontend/src/components/system/Header.tsx",
-    "frontend/src/components/editor/InspectorPanel.tsx",
-    "frontend/src/components/editor/MultiChannelAudioMixer.tsx",
-    "wrangler.jsonc",
-    "backend/wrangler.jsonc",
-    "mcp/cloudflare/wrangler.jsonc",
-    "example_bot/wrangler.jsonc"
-  ],
-  "cloudflareAI": {
-    "ttsModel": "@cf/myshell-ai/melotts",
-    "workerPath": "/api/ai/tts"
+  "platforms": {
+    "web": {
+      "enabled": true
+    },
+    "pwa": {
+      "enabled": true,
+      "startUrl": "/",
+      "display": "standalone",
+      "themeColor": "#070b12",
+      "backgroundColor": "#070b12"
+    },
+    "android": {
+      "enabled": true,
+      "packageId": "com.aistudiopro.vietsub",
+      "appName": "AI Studio Pro"
+    },
+    "ios": {
+      "enabled": true,
+      "bundleId": "com.aistudiopro.vietsub",
+      "appName": "AI Studio Pro"
+    }
   },
-  "publicAppUrl": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
+  "sync": {
+    "managedFiles": [
+      "package.json",
+      "capacitor.config.ts",
+      "public/manifest.json",
+      "public/_headers",
+      "wrangler.jsonc",
+      "src/generated/system-config.ts",
+      "src/generated/system-theme.css",
+      "index.html",
+      "public/sw.js"
+    ],
+    "broadcastEvent": "SYSTEM_CONFIG_SYNCED",
+    "releaseGate": "NOMINAL"
+  }
 }

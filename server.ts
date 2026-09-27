@@ -16,13 +16,14 @@ async function startServer() {
       server: {
         middlewareMode: true,
         host: '0.0.0.0',
+        hmr: false,
       },
       appType: 'spa',
     });
     app.use(vite.middlewares);
 
     app.use(async (req, res, next) => {
-      if (req.method !== 'GET' || req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/health')) {
+      if (req.method !== 'GET' || req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/health') || req.originalUrl.startsWith('/tai-app') || req.originalUrl.startsWith('/mcp')) {
         return next();
       }
       try {
