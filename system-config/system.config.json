@@ -43,7 +43,9 @@
     "provider": "cloudflare-r2",
     "bucketEnv": "R2_BUCKET",
     "zeroEgress": true,
-    "bucketName": "hendy-video-studio-pro-media"
+    "bucketName": "hendy-video-studio-pro-media",
+    "accountId": "918ff2f016938fc978ed23b96505b21e",
+    "endpoint": "https://918ff2f016938fc978ed23b96505b21e.r2.cloudflarestorage.com"
   },
   "editor": {
     "audioChannels": [
