@@ -2,8 +2,7 @@ import {spawnSync} from 'node:child_process';
 
 const run=(label,args)=>{
   console.log('\n=== '+label+' ===');
-  const cmd=process.platform==='win32'?'npx.cmd':'npx';
-  const r=spawnSync(cmd,['wrangler',...args],{stdio:'inherit',shell:false});
+  const r=spawnSync(process.execPath,['x','wrangler',...args],{stdio:'inherit',shell:false});
   if(r.status!==0) process.exit(r.status ?? 1);
 };
 
