@@ -86,3 +86,8 @@ Editor AI endpoints gồm translation/STT/TTS/audio-mix/storyboard/Vietnamese en
 Cloudflare's `@cloudflare/workers-types` publishes date-based versions. The Worker package pins `5.20260926.1` because the previously generated Workers Types specifier no longer resolves in the Cloudflare build environment.
 
 Cloudflare recommends generating Worker binding types with `wrangler types` for new projects; this repository keeps the package for editor/type declarations and can migrate to generated `worker-configuration.d.ts` later.
+
+
+## Full cloud production
+
+Use `PRODUCTION_SETUP.md` for the five-runtime deployment, required secrets, Telegram webhook and E2E health check. The React editor, Express API, AI Worker, MCP Worker and Telegram Worker are deployed behind the root gateway.
