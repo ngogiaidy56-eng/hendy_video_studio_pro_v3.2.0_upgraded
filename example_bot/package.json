@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "deploy": "wrangler deploy --config wrangler.jsonc",
-    "build": "wrangler deploy --dry-run --config wrangler.jsonc"
+    "build": "wrangler deploy --dry-run --config wrangler.jsonc",
+    "deploy": "wrangler deploy --config wrangler.jsonc"
   },
   "devDependencies": {
     "wrangler": "4.137.0",
