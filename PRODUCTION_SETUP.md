@@ -4,7 +4,16 @@
 Build command: `bun run build`
 Deploy command: `bun run deploy`
 
-The root Worker `hendy-video-studio-pro` serves React static assets and proxies `/api/*`, `/mcp` and `/telegram/*` to dedicated Workers.
+This repository is a Workers monorepo. Cloudflare Workers Builds deploys the Worker connected to that build project; Cloudflare documents that the connected Worker name must match the Wrangler Worker name, and monorepos should connect each Worker separately. The deploy script therefore detects `WRANGLER_CI_OVERRIDE_NAME` and deploys only the connected target. Local/manual `bun run deploy` still deploys all five targets. citeturn194844search0turn194844search4
+
+Create/connect five Cloudflare Workers Build projects to this repository:
+- root: `hendy-video-studio-pro`
+- backend: `hendy-video-studio-pro-backend`
+- AI: `hendy-video-studio-pro-ai`
+- MCP: `hendy-video-studio-pro-mcp`
+- Telegram: `hendy-video-studio-pro-telegram`
+
+For each project, make sure the connected Worker name matches its Wrangler `name` value. The root Worker serves React static assets and proxies `/api/*`, `/mcp` and `/telegram/*` to dedicated Workers.
 
 ## Runtime Workers
 - `hendy-video-studio-pro` — React 19 gateway + static assets
@@ -17,11 +26,12 @@ The root Worker `hendy-video-studio-pro` serves React static assets and proxies 
 Add these as Cloudflare Worker Secrets on `hendy-video-studio-pro-backend`:
 - `GEMINI_API_KEY`
 - `TELEGRAM_BOT_TOKEN`
-- `R2_ACCOUNT_ID`
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
 - `ADMIN_USER_IDS`
 - `MCP_OTP_SECRET`
+
+R2 account ID and endpoint are non-secret SOT variables and are generated into the backend Wrangler config.
 
 `R2_BUCKET` is generated from SOT `storage.bucketName`. Set it to the real existing R2 bucket.
 
