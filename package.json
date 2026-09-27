@@ -22,11 +22,11 @@
     "backend:check": "npm --workspace backend run typecheck",
     "worker:check": "npm --workspace worker run typecheck",
     "backend:deploy": "wrangler deploy --config backend/wrangler.jsonc",
-    "worker:deploy": "wrangler deploy --config worker/wrangler.jsonc",
+    "worker:deploy": "node system-config/scripts/deploy-all.mjs",
     "mcp:deploy": "wrangler deploy --config mcp/cloudflare/wrangler.jsonc",
     "bot:deploy": "wrangler deploy --config example_bot/wrangler.jsonc",
     "deploy:all": "node system-config/scripts/deploy-all.mjs",
-    "deploy": "npm run deploy:all",
+    "deploy": "node system-config/scripts/deploy-all.mjs",
     "release:gate": "npm run config:validate && npm run config:sync && npm run typecheck && npm run build",
     "source:export": "node system-config/scripts/export-source-md.mjs",
     "production:check": "node system-config/scripts/production-check.mjs"
