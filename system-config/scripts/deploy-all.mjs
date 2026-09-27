@@ -18,22 +18,26 @@ const run=(label,args)=>{
 
 run('RELEASE GATE · validate + sync + build',['run','build']);
 
-// Workers Builds sets WRANGLER_CI_OVERRIDE_NAME to the Worker connected in the
-// Cloudflare dashboard. A single connected build must deploy only that Worker;
-// deploying every config would make Wrangler overwrite the connected Worker
-// name on each invocation. Local/manual CLI runs still deploy all targets.
+// A Workers Builds project is connected to exactly one Worker. Cloudflare
+// enforces that the Wrangler config deployed by that build matches the
+// connected Worker name. Therefore the repository's top-level Workers Build
+// deploys only the gateway Worker. The other service Workers have their own
+// Wrangler configs and should be connected to separate Workers Builds projects
+// (or deployed together from a local/CI runner with Cloudflare credentials).
+const isWorkersBuild = process.env.WORKERS_CI === '1';
 const connectedName = process.env.WRANGLER_CI_OVERRIDE_NAME?.trim();
 
-if (connectedName) {
-  const target = targets.find(item => item.name === connectedName);
-  if (!target) {
-    console.error('\nERROR: WRANGLER_CI_OVERRIDE_NAME does not match a Hendy Worker: '+connectedName);
-    console.error('Expected one of: '+targets.map(item => item.name).join(', '));
+if (isWorkersBuild) {
+  if (connectedName && connectedName !== 'hendy-video-studio-pro') {
+    console.error('\nERROR: This repository is configured as the gateway Workers Build.');
+    console.error('Connected Worker: '+connectedName);
+    console.error('Expected: hendy-video-studio-pro');
+    console.error('Connect the backend/AI/MCP/Telegram configs as separate Workers Builds.');
     process.exit(2);
   }
 
-  run(target.label,['x','wrangler','deploy','--config',target.config]);
-  console.log('\nWORKERS BUILDS TARGET DEPLOYED: '+target.name);
+  run('GATEWAY · React 19 + Static Assets',['x','wrangler','deploy','--config','wrangler.jsonc']);
+  console.log('\nWORKERS BUILDS GATEWAY DEPLOYED: hendy-video-studio-pro');
 } else {
   for (const target of targets) {
     run(target.label,['x','wrangler','deploy','--config',target.config]);
