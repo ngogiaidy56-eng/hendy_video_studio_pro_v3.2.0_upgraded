@@ -7,7 +7,11 @@
     "directory": "./frontend/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*", "/mcp", "/telegram/*"]
+    "run_worker_first": [
+      "/api/*", 
+      "/mcp/*", 
+      "/telegram/*"
+    ]
   },
   "services": [
     {"binding": "BACKEND", "service": "hendy-video-studio-pro-backend"},
