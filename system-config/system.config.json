@@ -84,7 +84,10 @@
     "frontend/src/components/system/Header.tsx",
     "frontend/src/components/editor/InspectorPanel.tsx",
     "frontend/src/components/editor/MultiChannelAudioMixer.tsx",
-    "wrangler.jsonc"
+    "wrangler.jsonc",
+    "backend/wrangler.jsonc",
+    "mcp/cloudflare/wrangler.jsonc",
+    "example_bot/wrangler.jsonc"
   ],
   "cloudflareAI": {
     "ttsModel": "@cf/myshell-ai/melotts",
