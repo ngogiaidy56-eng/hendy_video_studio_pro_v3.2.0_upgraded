@@ -46,6 +46,8 @@ Direct health endpoint:
 Expected:
 `PRODUCTION E2E HEALTH: PASS`
 
+The readiness check is strict: the backend must report Gemini, Telegram and R2 credentials as configured.
+
 ## Main routes
 - `/api/gemini/subtitles`
 - `/api/gemini/tts`
