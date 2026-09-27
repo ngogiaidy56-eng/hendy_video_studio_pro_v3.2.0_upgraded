@@ -21,11 +21,12 @@ Add these as Cloudflare Worker Secrets on `hendy-video-studio-pro-backend`:
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
 - `ADMIN_USER_IDS`
+- `MCP_OTP_SECRET`
 
 `R2_BUCKET` is generated from SOT `storage.bucketName`. Set it to the real existing R2 bucket.
 
 ## Telegram
-Add `TELEGRAM_BOT_TOKEN` as a Secret on `hendy-video-studio-pro-telegram`.
+Add `TELEGRAM_BOT_TOKEN` and `MCP_OTP_SECRET` as Secrets on `hendy-video-studio-pro-telegram`.
 
 Set the Telegram webhook to:
 `https://hendy-video-studio-pro.ngogiaidy56.workers.dev/telegram/webhook`
