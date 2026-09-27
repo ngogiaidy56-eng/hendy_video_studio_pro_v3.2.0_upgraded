@@ -12,7 +12,8 @@
     "editor",
     "theme",
     "managedFiles",
-    "cloudflareAI"
+    "cloudflareAI",
+    "publicAppUrl"
   ],
   "properties": {
     "system": {
@@ -284,6 +285,11 @@
         }
       },
       "additionalProperties": false
+    },
+    "publicAppUrl": {
+      "type": "string",
+      "minLength": 8,
+      "pattern": "^https://"
     }
   },
   "additionalProperties": false
