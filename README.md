@@ -51,7 +51,7 @@ Server sẽ dựng một workspace tạm trong `.tmp/` và chạy build/check th
 
 ## Cloudflare build/deploy
 
-Repo là monorepo. Bản này dùng `wrangler.jsonc` ở root để trỏ rõ vào `worker/src/index.ts`.
+Repo là monorepo. `wrangler.jsonc` ở root là gateway Worker, phục vụ React static assets và định tuyến Service Bindings tới các runtime chuyên biệt.
 
 Workers Build settings:
 
@@ -66,7 +66,7 @@ Frontend Pages nên là project riêng: root directory `frontend`, build command
 
 ## Production release gate
 
-Cloudflare Workers Build thực hiện release gate → build → deploy theo `bun run worker:deploy`. Rollback là một thao tác riêng và không cho phép agent tự ý chạy arbitrary commands.
+Cloudflare Workers Build của root thực hiện release gate → build → deploy gateway theo `bun run worker:deploy`. Backend, AI, MCP và Telegram là các Worker riêng, mỗi Worker cần một Workers Build riêng hoặc được deploy từ CI/CLI có Cloudflare credentials. Rollback là một thao tác riêng và không cho phép agent tự ý chạy arbitrary commands.
 
 ## Download gateway
 
@@ -95,4 +95,4 @@ Use `PRODUCTION_SETUP.md` for the five-runtime deployment, required secrets, Tel
 
 ## Current Cloudflare Build command
 
-The existing Workers Build deploy command `bun run worker:deploy` is intentionally retained. It now runs the release gate (`config:validate` → `config:sync` → frontend/backend/worker/MCP build) and then deploys Backend → AI Edge → MCP → Telegram → Gateway in order.
+The existing Workers Build deploy command `bun run worker:deploy` is intentionally retained. In Workers Builds it runs the release gate (`config:validate` → `config:sync` → frontend/backend/worker/MCP build) and then deploys only the connected root gateway. A manual/local `bun run deploy:all` can deploy Backend → AI Edge → MCP → Telegram → Gateway in order.
