@@ -4,9 +4,9 @@
 Build command: `bun run build`
 Deploy command: `bun run deploy`
 
-This repository is a Workers monorepo. Cloudflare Workers Builds deploys the Worker connected to that build project; Cloudflare documents that the connected Worker name must match the Wrangler Worker name, and monorepos should connect each Worker separately. The deploy script therefore detects `WRANGLER_CI_OVERRIDE_NAME` and deploys only the connected target. Local/manual `bun run deploy` still deploys all five targets.
+This repository is a Workers monorepo. Cloudflare Workers Builds deploys the Worker connected to that build project; Cloudflare documents that the connected Worker name must match the Wrangler Worker name, and monorepos should connect each Worker separately. The deploy script detects the Workers Builds context (`WORKERS_CI=1`) and deploys only the top-level gateway Worker from this repository. Local/manual `bun run deploy` still deploys all five targets.
 
-Create/connect five Cloudflare Workers Build projects to this repository:
+Create/connect five Cloudflare Workers Build projects to this repository (one per Worker):
 - root: `hendy-video-studio-pro`
 - backend: `hendy-video-studio-pro-backend`
 - AI: `hendy-video-studio-pro-ai`
