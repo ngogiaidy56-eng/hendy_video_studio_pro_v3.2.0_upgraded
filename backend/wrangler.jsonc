@@ -1,15 +1,27 @@
 {
-  "$schema":"../node_modules/wrangler/config-schema.json",
-  "name":"hendy-video-studio-pro-backend",
-  "main":"src/worker.ts",
-  "compatibility_date":"2026-09-27",
-  "compatibility_flags":["nodejs_compat"],
-  "vars":{
-    "FRONTEND_ORIGIN":"https://hendy-video-studio-pro.ngogiaidy56.workers.dev",
-    "PUBLIC_APP_URL":"https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "hendy-video-studio-pro-backend",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-09-27",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "FRONTEND_ORIGIN": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev",
+    "PUBLIC_APP_URL": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
   },
-  "secrets":{
-    "required":["GEMINI_API_KEY","TELEGRAM_BOT_TOKEN","R2_ACCOUNT_ID","R2_ACCESS_KEY_ID","R2_SECRET_ACCESS_KEY","ADMIN_USER_IDS"]
+  "secrets": {
+    "required": [
+      "GEMINI_API_KEY",
+      "TELEGRAM_BOT_TOKEN",
+      "R2_ACCOUNT_ID",
+      "R2_ACCESS_KEY_ID",
+      "R2_SECRET_ACCESS_KEY",
+      "ADMIN_USER_IDS",
+      "MCP_OTP_SECRET"
+    ]
   },
-  "dev":{"port":8787}
+  "dev": {
+    "port": 8787
+  }
 }
