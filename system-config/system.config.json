@@ -82,7 +82,8 @@
     "worker/package.json",
     "frontend/src/components/system/Header.tsx",
     "frontend/src/components/editor/InspectorPanel.tsx",
-    "frontend/src/components/editor/MultiChannelAudioMixer.tsx"
+    "frontend/src/components/editor/MultiChannelAudioMixer.tsx",
+    "wrangler.jsonc"
   ],
   "cloudflareAI": {
     "ttsModel": "@cf/myshell-ai/melotts",
