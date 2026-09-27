@@ -1,6 +1,13 @@
 {
-  "name":"@hendy/telegram-worker",
-  "private":true,
-  "type":"module",
-  "scripts":{"deploy":"wrangler deploy --config wrangler.jsonc"}
+  "name": "@hendy/telegram-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy --config wrangler.jsonc"
+  },
+  "devDependencies": {
+    "wrangler": "4.137.0",
+    "@cloudflare/workers-types": "5.20260926.1",
+    "typescript": "^5.9.2"
+  }
 }
