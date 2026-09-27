@@ -33,7 +33,10 @@ fs.writeFileSync(path.join(root, 'frontend/public/manifest.json'), JSON.stringif
 fs.writeFileSync(path.join(root, 'frontend/index.html'),
 `<!doctype html><html lang="vi"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><title>${cfg.system.name}</title><meta name="theme-color" content="${cfg.theme.darkBackgroundColor}"/><script src="https://telegram.org/js/telegram-web-app.js"></script></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>`);
 
-fs.writeFileSync(path.join(root, 'worker/wrangler.jsonc'), JSON.stringify({name:'hendy-video-studio-pro-api',main:'src/index.ts',compatibility_date:'2026-09-27',vars:{API_BASE_PATH:cfg.network.apiBasePath,CLOUDFLARE_TTS_MODEL:cfg.cloudflareAI.ttsModel},ai:{binding:'AI'},dev:{port:cfg.network.workerPort}}, null, 2));
+const workerWrangler = {name:'hendy-video-studio-pro-api',main:'src/index.ts',compatibility_date:'2026-09-27',vars:{API_BASE_PATH:cfg.network.apiBasePath,CLOUDFLARE_TTS_MODEL:cfg.cloudflareAI.ttsModel},ai:{binding:'AI'},dev:{port:cfg.network.workerPort}};
+fs.writeFileSync(path.join(root, 'worker/wrangler.jsonc'), JSON.stringify(workerWrangler, null, 2));
+const rootWrangler = {name:'hendy-video-studio-pro-api',main:'worker/src/index.ts',compatibility_date:'2026-09-27',vars:{API_BASE_PATH:cfg.network.apiBasePath,CLOUDFLARE_TTS_MODEL:cfg.cloudflareAI.ttsModel},ai:{binding:'AI'}};
+fs.writeFileSync(path.join(root, 'wrangler.jsonc'), JSON.stringify(rootWrangler, null, 2));
 
 const workerPackagePath = path.join(root, 'worker/package.json');
 const workerPackage = JSON.parse(fs.readFileSync(workerPackagePath, 'utf8'));
