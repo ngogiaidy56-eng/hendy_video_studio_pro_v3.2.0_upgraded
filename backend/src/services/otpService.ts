@@ -1,22 +1,22 @@
 import crypto from 'node:crypto';
 
-type Entry = {hash:string; expiresAt:number};
-const entries = new Map<string, Entry>();
-
-export function issueOtp(scope:string, ttlSeconds:number): string {
-  const otp = crypto.randomBytes(4).toString('hex').toUpperCase();
-  entries.set(scope, {hash:hashOtp(otp), expiresAt:Date.now()+ttlSeconds*1000});
-  return otp;
+export function issueOtp(scope:string,ttlSeconds=60):string{
+  return deriveOtp(scope,Math.floor(Date.now()/(ttlSeconds*1000)));
 }
 
-export function verifyOtp(scope:string, otp:string): boolean {
-  const entry = entries.get(scope);
-  if (!entry || Date.now() > entry.expiresAt) { entries.delete(scope); return false; }
-  const actual = Buffer.from(hashOtp(otp));
-  const expected = Buffer.from(entry.hash);
-  const ok = actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
-  if (ok) entries.delete(scope);
-  return ok;
+export function verifyOtp(scope:string,otp:string,ttlSeconds=60):boolean{
+  const step=Math.floor(Date.now()/(ttlSeconds*1000));
+  return constantTimeEqual(deriveOtp(scope,step),otp) || constantTimeEqual(deriveOtp(scope,step-1),otp);
 }
 
-function hashOtp(value:string): string { return crypto.createHash('sha256').update(value).digest('hex'); }
+function deriveOtp(scope:string,step:number):string{
+  const secret=process.env.MCP_OTP_SECRET;
+  if(!secret) throw new Error('MCP_OTP_SECRET is not configured');
+  const digest=crypto.createHmac('sha256',secret).update(scope+':'+step).digest('hex');
+  return digest.slice(0,8).toUpperCase();
+}
+
+function constantTimeEqual(a:string,b:string):boolean{
+  const x=Buffer.from(a); const y=Buffer.from(String(b).toUpperCase());
+  return x.length===y.length && crypto.timingSafeEqual(x,y);
+}
