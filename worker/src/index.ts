@@ -41,7 +41,11 @@ export default {
       }
 
       if (ArrayBuffer.isView(result)) {
-        const view = result as Uint8Array;
+        // Cloudflare's AI typings narrow this branch to an intersection
+        // that is not directly assignable to Uint8Array under strict TS.
+        // The runtime value is an ArrayBufferView, so normalize it through
+        // unknown before slicing the exact byte range into an ArrayBuffer.
+        const view = result as unknown as Uint8Array;
         const bodyBuffer = view.buffer.slice(
           view.byteOffset,
           view.byteOffset + view.byteLength
