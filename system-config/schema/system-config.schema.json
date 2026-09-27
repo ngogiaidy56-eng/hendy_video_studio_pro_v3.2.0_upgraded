@@ -144,7 +144,9 @@
       "required": [
         "provider",
         "bucketEnv",
-        "zeroEgress"
+        "zeroEgress",
+        "accountId",
+        "endpoint"
       ],
       "properties": {
         "provider": {
@@ -159,6 +161,14 @@
         "bucketName": {
           "type": "string",
           "minLength": 3
+        },
+        "accountId": {
+          "type": "string",
+          "minLength": 20
+        },
+        "endpoint": {
+          "type": "string",
+          "pattern": "^https://.+$"
         }
       },
       "additionalProperties": false
