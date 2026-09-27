@@ -1,30 +1,26 @@
-# Cloudflare Build Fix — 2026-09-27
+# Cloudflare Build/Deploy Fix — 2026-09-27
 
-## Failure
-Cloudflare Bun build failed during dependency resolution with:
+## Dependency resolution
+The previous Workers Types error was fixed by pinning `@cloudflare/workers-types` to `5.20260926.1`.
 
-`No version matching "^4.20260920.0" found for specifier "@cloudflare/workers-types"`
+## Current deployment error
+The build/install stage now succeeds. The remaining failure is caused by running `npx wrangler deploy` from the monorepo root while Wrangler cannot identify the intended application.
 
-## Fix
-`worker/package.json` now pins the published Workers Types release:
+The repository now includes a root `wrangler.jsonc` targeting `worker/src/index.ts`, plus:
+- `bun run deploy` → `wrangler deploy --config wrangler.jsonc`
+- `bun run worker:deploy` → deploy the Worker using its workspace config.
 
-```json
-"@cloudflare/workers-types": "5.20260926.1"
-```
+## Cloudflare Workers settings
+Use:
+`Build command: bun run build`
+`Deploy command: bun run deploy`
 
-The same version is reflected in `SYSTEM_SOT_SOURCE_CODE.md`.
+Do not use `npm install` as the user build command because Cloudflare already ran `bun install`.
 
-Cloudflare introduced `@cloudflare/workers-types` v5 in July 2026 and recommends `wrangler types` for configuration-specific runtime types. The package remains published and the verified registry release used here is `5.20260926.1`.
+## Cloudflare Pages
+Deploy the React editor separately:
+- Root directory: `frontend`
+- Build command: `bun run build`
+- Output directory: `dist`
 
-## Rebuild
-Cloudflare Pages / Workers can continue to use its detected Bun environment:
-
-```bash
-bun install
-bun run config:validate
-bun run config:sync
-bun run typecheck
-bun run build
-```
-
-No real secrets are stored in the repository. Put production values in Cloudflare/GitHub secrets or local `.env` files.
+No production secrets are committed.
