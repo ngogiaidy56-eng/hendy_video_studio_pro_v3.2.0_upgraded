@@ -1,12 +1,18 @@
 {
-  "name": "hendy-video-studio-pro-api",
-  "main": "worker/src/index.ts",
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hendy-video-studio-pro",
+  "main": "frontend/src/edge.ts",
   "compatibility_date": "2026-09-27",
-  "vars": {
-    "API_BASE_PATH": "/api/v1",
-    "CLOUDFLARE_TTS_MODEL": "@cf/myshell-ai/melotts"
+  "assets": {
+    "directory": "./frontend/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/mcp", "/telegram/*"]
   },
-  "ai": {
-    "binding": "AI"
-  }
+  "services": [
+    {"binding": "BACKEND", "service": "hendy-video-studio-pro-backend"},
+    {"binding": "AI_EDGE", "service": "hendy-video-studio-pro-ai"},
+    {"binding": "MCP", "service": "hendy-video-studio-pro-mcp"},
+    {"binding": "TELEGRAM", "service": "hendy-video-studio-pro-telegram"}
+  ]
 }
