@@ -1,34 +1,28 @@
 {
-  "name": "hendy-video-studio-pro",
-  "private": true,
-  "version": "2.4.0",
-  "workspaces": [
-    "system-config",
-    "backend",
-    "worker",
-    "frontend",
-    "example_bot",
-    "mcp/cloudflare"
-  ],
-  "scripts": {
-    "config:validate": "node system-config/scripts/validate-config.mjs",
-    "config:sync": "node system-config/scripts/sync-config.mjs",
-    "sandbox": "node system-config/sandbox/server.mjs",
-    "dev": "npm run config:sync && npm --workspace frontend run dev",
-    "build": "npm run config:validate && npm run config:sync && npm --workspace frontend run build && npm --workspace backend run build && npm --workspace worker run build",
-    "typecheck": "npm --workspace backend run typecheck && npm --workspace worker run typecheck && npm --workspace frontend run typecheck && npm --workspace mcp/cloudflare run typecheck",
-    "mcp": "npm --workspace mcp/cloudflare run dev",
-    "editor:check": "npm --workspace frontend run typecheck",
-    "backend:check": "npm --workspace backend run typecheck",
-    "worker:check": "npm --workspace worker run typecheck",
-    "worker:deploy": "wrangler deploy --config worker/wrangler.jsonc",
-    "deploy": "wrangler deploy --config wrangler.jsonc",
-    "release:gate": "npm run config:validate && npm run config:sync && npm run typecheck && npm run build",
-    "source:export": "node system-config/scripts/export-source-md.mjs"
+  "name":"hendy-video-studio-pro",
+  "private":true,
+  "version":"2.4.0",
+  "workspaces":["system-config","backend","worker","frontend","example_bot","mcp/cloudflare"],
+  "scripts":{
+    "config:validate":"node system-config/scripts/validate-config.mjs",
+    "config:sync":"node system-config/scripts/sync-config.mjs",
+    "sandbox":"node system-config/sandbox/server.mjs",
+    "dev":"npm run config:sync && npm --workspace frontend run dev",
+    "build":"npm run config:validate && npm run config:sync && npm --workspace frontend run build && npm --workspace backend run build && npm --workspace worker run build && npm --workspace mcp/cloudflare run build",
+    "typecheck":"npm --workspace backend run typecheck && npm --workspace worker run typecheck && npm --workspace frontend run typecheck && npm --workspace mcp/cloudflare run typecheck",
+    "mcp":"npm --workspace mcp/cloudflare run dev",
+    "editor:check":"npm --workspace frontend run typecheck",
+    "backend:check":"npm --workspace backend run typecheck",
+    "worker:check":"npm --workspace worker run typecheck",
+    "backend:deploy":"wrangler deploy --config backend/wrangler.jsonc",
+    "worker:deploy":"wrangler deploy --config worker/wrangler.jsonc",
+    "mcp:deploy":"wrangler deploy --config mcp/cloudflare/wrangler.jsonc",
+    "bot:deploy":"wrangler deploy --config example_bot/wrangler.jsonc",
+    "deploy:all":"node system-config/scripts/deploy-all.mjs",
+    "deploy":"npm run deploy:all",
+    "release:gate":"npm run config:validate && npm run config:sync && npm run typecheck && npm run build",
+    "source:export":"node system-config/scripts/export-source-md.mjs"
   },
-  "engines": {
-    "node": ">=22 <25",
-    "bun": ">=1.2.15"
-  },
-  "packageManager": "bun@1.2.15"
+  "engines":{"node":">=22 <25","bun":">=1.2.15"},
+  "packageManager":"bun@1.2.15"
 }
