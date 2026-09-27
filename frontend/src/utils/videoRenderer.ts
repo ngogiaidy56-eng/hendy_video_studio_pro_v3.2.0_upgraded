@@ -18,7 +18,7 @@ export function exportCanvasVideo(canvas: HTMLCanvasElement, renderFrame: Render
     const recorder = new MediaRecorder(stream, { mimeType: preferred, videoBitsPerSecond: 8_000_000 });
     const started = performance.now();
     recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
-    recorder.onerror = () => reject(recorder.error || new Error('MediaRecorder failed'));
+    recorder.onerror = (e) => reject((e as ErrorEvent).error || new Error('MediaRecorder failed'));
     recorder.onstop = () => resolve(new Blob(chunks, { type: preferred }));
     recorder.start(200);
     const tick = (now: number) => {

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 export function AssetSidebar({onUpload,onRecord,onTranscribe}:{onUpload:(file:File)=>void;onRecord?:()=>void;onTranscribe?:(file:File)=>void}){
-  const ref=useRef<HTMLInputElement>(null); const [drag,setDrag]=useState(false); const [recording,setRecording]=useState(false); const recorder=useRef<MediaRecorder>(); const chunks=useRef<BlobPart[]>([]); const lastAudio=useRef<File>();
+  const ref=useRef<HTMLInputElement>(null); const [drag,setDrag]=useState(false); const [recording,setRecording]=useState(false); const recorder=useRef<MediaRecorder | undefined>(undefined); const chunks=useRef<BlobPart[]>([]); const lastAudio=useRef<File | undefined>(undefined);
   const importFile=(file:File)=>{lastAudio.current=file.type.startsWith('audio/')?file:lastAudio.current;onUpload(file)};
   const startRecord=async()=>{
     if(recording)return;

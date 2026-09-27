@@ -1,0 +1,7 @@
+{
+  "name": "Hendy Video Studio Pro",
+  "description": "Professional AI-powered video and subtitle editing studio with multi-track timeline, Vietnamese text enhancement, and Gemini audio processing.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

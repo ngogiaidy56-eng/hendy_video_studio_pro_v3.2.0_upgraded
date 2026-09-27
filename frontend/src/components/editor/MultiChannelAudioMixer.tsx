@@ -6,7 +6,7 @@ type Channel={gain:number;muted:boolean;ducking:boolean};
 const CHANNELS:ChannelId[]=['video','bgm','tts','master'];
 export function MultiChannelAudioMixer({onAiOptimize}:{onAiOptimize?:(channels:Record<ChannelId,Channel>)=>Promise<Record<string,unknown>|void>}){
   const [channels,setChannels]=useState<Record<ChannelId,Channel>>({video:{gain:1,muted:false,ducking:false},bgm:{gain:.8,muted:false,ducking:true},tts:{gain:1,muted:false,ducking:false},master:{gain:1,muted:false,ducking:false}});
-  const [ducking,setDucking]=useState(true); const [running,setRunning]=useState(false); const engine=useRef<AudioEngine>(); const [,force]=useState(0);
+  const [ducking,setDucking]=useState(true); const [running,setRunning]=useState(false); const engine=useRef<AudioEngine | undefined>(undefined); const [,force]=useState(0);
   const start=async()=>{if(!engine.current) engine.current=new AudioEngine(); await engine.current.resume(); setRunning(true);};
   useEffect(()=>()=>engine.current?.close(),[]);
   useEffect(()=>{CHANNELS.forEach(k=>engine.current?.setGain(k,channels[k].gain,channels[k].muted)); engine.current?.setDucking(ducking,SYSTEM_CONFIG.editor.duckingGain);},[channels,ducking]);
