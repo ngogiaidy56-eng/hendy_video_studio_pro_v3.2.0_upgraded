@@ -155,6 +155,10 @@
         },
         "zeroEgress": {
           "type": "boolean"
+        },
+        "bucketName": {
+          "type": "string",
+          "minLength": 3
         }
       },
       "additionalProperties": false
