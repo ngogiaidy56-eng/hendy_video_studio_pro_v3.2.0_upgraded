@@ -26,13 +26,14 @@ export default {
     }
 
     if(url.pathname==='/health/all') {
-      const [backend,ai,mcp,telegram]=await Promise.all([
+      const [backend,backendReady,ai,mcp,telegram]=await Promise.all([
         probe(env.BACKEND,'/health',request),
+        probe(env.BACKEND,'/health/ready',request),
         probe(env.AI_EDGE,'/health',request),
         probe(env.MCP,'/health',request),
         probe(env.TELEGRAM,'/health',request)
       ]);
-      const checks={gateway:{status:200,ok:true},backend,ai,mcp,telegram};
+      const checks={gateway:{status:200,ok:true},backend,backendReady,ai,mcp,telegram};
       return Response.json({ok:Object.values(checks).every(x=>x.ok),checks,version:'2.4.0'},{
         status:Object.values(checks).every(x=>x.ok)?200:503,
         headers:{'cache-control':'no-store'}
