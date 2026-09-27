@@ -4,12 +4,17 @@ export const SYSTEM_CONFIG = {
     "version": "2.4.0",
     "environment": "production"
   },
+  "toolchain": {
+    "workersTypes": "5.20260926.1",
+    "wrangler": "4.137.0"
+  },
   "network": {
     "sandboxPort": 8799,
     "backendPort": 8787,
     "frontendPort": 5173,
     "apiBasePath": "/api/v1",
-    "mcpPath": "/mcp"
+    "mcpPath": "/mcp",
+    "workerPort": 8788
   },
   "features": {
     "enableMCP": true,
@@ -23,9 +28,14 @@ export const SYSTEM_CONFIG = {
   "ai": {
     "provider": "google",
     "models": {
-      "translation": "gemini-2.5-flash",
-      "ocr": "gemini-2.5-flash",
-      "stt": "gemini-2.5-flash"
+      "translation": "gemini-3.8-flash",
+      "ocr": "gemini-3.8-flash",
+      "stt": "gemini-3.8-flash",
+      "tts": "gemini-3.8-flash-tts",
+      "ttsLite": "gemini-3.8-flash-lite-tts",
+      "storyboard": "gemini-3.8-flash",
+      "audioMix": "gemini-3.8-flash",
+      "vietnamese": "gemini-3.8-flash"
     },
     "temperature": 0.1
   },
@@ -42,7 +52,18 @@ export const SYSTEM_CONFIG = {
       "master"
     ],
     "duckingGain": 0.2,
-    "transitionGapSeconds": 1.5
+    "transitionGapSeconds": 1.5,
+    "defaultWidth": 1280,
+    "defaultHeight": 720,
+    "defaultFps": 30,
+    "defaultSubtitleStyle": {
+      "fontFamily": "Arial",
+      "fontSize": 46,
+      "color": "#ffffff",
+      "strokeColor": "#000000",
+      "strokeWidth": 6,
+      "bottomPx": 52
+    }
   },
   "theme": {
     "darkBackgroundColor": "#17171a",
@@ -57,6 +78,14 @@ export const SYSTEM_CONFIG = {
     "frontend/src/generated/system-layout.tsx",
     "frontend/public/manifest.json",
     "frontend/index.html",
-    "worker/wrangler.jsonc"
-  ]
+    "worker/wrangler.jsonc",
+    "worker/package.json",
+    "frontend/src/components/system/Header.tsx",
+    "frontend/src/components/editor/InspectorPanel.tsx",
+    "frontend/src/components/editor/MultiChannelAudioMixer.tsx"
+  ],
+  "cloudflareAI": {
+    "ttsModel": "@cf/myshell-ai/melotts",
+    "workerPath": "/api/ai/tts"
+  }
 } as const;

@@ -5,6 +5,8 @@ import {authRouter} from './routes/auth.js';
 import {mediaRouter} from './routes/media.js';
 import {projectRouter} from './routes/projects.js';
 import {smartDownload} from './controllers/downloadController.js';
+import {geminiRouter} from './routes/gemini.js';
+import {cloudflareRouter} from './routes/cloudflare.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -14,6 +16,8 @@ app.get('/health',(req,res)=>res.json({ok:true,version:'2.4.0',timestamp:new Dat
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/media',mediaRouter);
 app.use('/api/v1/projects',projectRouter);
+app.use('/api/gemini', geminiRouter);
+app.use('/api/cloudflare', cloudflareRouter);
 app.get('/tai-app',smartDownload);
 app.use((err:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{console.error(err);res.status(500).json({error:'Internal server error'});});
 

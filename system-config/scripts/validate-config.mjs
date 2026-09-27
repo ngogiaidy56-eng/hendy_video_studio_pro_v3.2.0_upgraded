@@ -10,12 +10,17 @@ const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 function fail(message){console.error(`SOT validation failed: ${message}`);process.exit(1)}
 function isHex(v){return typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v)}
 function required(obj, keys, label){for(const k of keys)if(!(k in obj))fail(`${label}.${k} is required`)}
-required(config,['system','network','features','ai','storage','editor','theme','managedFiles'],'root');
+required(config,['system','toolchain','network','features','ai','storage','editor','theme','managedFiles','cloudflareAI'],'root');
+required(config.toolchain,['workersTypes','wrangler'],'toolchain');
+if(!/^\d+\.\d{8}\.\d+$/.test(config.toolchain.workersTypes))fail('toolchain.workersTypes invalid date-version');
+if(!/^\d+\.\d+\.\d+$/.test(config.toolchain.wrangler))fail('toolchain.wrangler invalid semver');
+required(config.cloudflareAI,['ttsModel','workerPath'],'cloudflareAI');
+
 required(config.system,['name','version','environment'],'system');
 if(!/^\d+\.\d+\.\d+$/.test(config.system.version))fail('system.version must be semver-like');
 if(!['development','staging','production'].includes(config.system.environment))fail('system.environment invalid');
 required(config.network,['sandboxPort','backendPort','frontendPort','apiBasePath','mcpPath'],'network');
-for(const k of ['sandboxPort','backendPort','frontendPort'])if(!Number.isInteger(config.network[k])||config.network[k]<1024||config.network[k]>65535)fail(`network.${k} invalid port`);
+for(const k of ['sandboxPort','backendPort','workerPort','frontendPort'])if(!Number.isInteger(config.network[k])||config.network[k]<1024||config.network[k]>65535)fail(`network.${k} invalid port`);
 for(const k of ['apiBasePath','mcpPath'])if(typeof config.network[k]!=='string'||!config.network[k].startsWith('/'))fail(`network.${k} invalid path`);
 if(typeof config.features!=='object'||Array.isArray(config.features))fail('features must be object');
 for(const [k,v] of Object.entries(config.features))if(typeof v!=='boolean')fail(`features.${k} must be boolean`);

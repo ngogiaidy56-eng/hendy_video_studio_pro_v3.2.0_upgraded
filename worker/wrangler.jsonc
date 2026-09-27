@@ -3,6 +3,13 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-09-27",
   "vars": {
-    "API_BASE_PATH": "/api/v1"
+    "API_BASE_PATH": "/api/v1",
+    "CLOUDFLARE_TTS_MODEL": "@cf/myshell-ai/melotts"
+  },
+  "ai": {
+    "binding": "AI"
+  },
+  "dev": {
+    "port": 8788
   }
 }

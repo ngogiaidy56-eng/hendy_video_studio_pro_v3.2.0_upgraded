@@ -2,73 +2,289 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://hendy-video-studio.local/schema/system-config.schema.json",
   "type": "object",
-  "required": ["system", "network", "features", "ai", "storage", "editor", "theme", "managedFiles"],
+  "required": [
+    "system",
+    "toolchain",
+    "network",
+    "features",
+    "ai",
+    "storage",
+    "editor",
+    "theme",
+    "managedFiles",
+    "cloudflareAI"
+  ],
   "properties": {
     "system": {
       "type": "object",
-      "required": ["name", "version", "environment"],
+      "required": [
+        "name",
+        "version",
+        "environment"
+      ],
       "properties": {
-        "name": {"type": "string", "minLength": 1},
-        "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
-        "environment": {"enum": ["development", "staging", "production"]}
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "environment": {
+          "enum": [
+            "development",
+            "staging",
+            "production"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "toolchain": {
+      "type": "object",
+      "required": [
+        "workersTypes",
+        "wrangler"
+      ],
+      "properties": {
+        "workersTypes": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d{8}\\.\\d+$"
+        },
+        "wrangler": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        }
       },
       "additionalProperties": false
     },
     "network": {
       "type": "object",
-      "required": ["sandboxPort", "backendPort", "frontendPort", "apiBasePath", "mcpPath"],
+      "required": [
+        "sandboxPort",
+        "backendPort",
+        "frontendPort",
+        "apiBasePath",
+        "mcpPath",
+        "workerPort"
+      ],
       "properties": {
-        "sandboxPort": {"type": "integer", "minimum": 1024, "maximum": 65535},
-        "backendPort": {"type": "integer", "minimum": 1024, "maximum": 65535},
-        "frontendPort": {"type": "integer", "minimum": 1024, "maximum": 65535},
-        "apiBasePath": {"type": "string", "pattern": "^/"},
-        "mcpPath": {"type": "string", "pattern": "^/"}
+        "sandboxPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "backendPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "frontendPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "apiBasePath": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "mcpPath": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "workerPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535
+        }
       },
       "additionalProperties": false
     },
-    "features": {"type": "object", "additionalProperties": {"type": "boolean"}},
+    "features": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
     "ai": {
       "type": "object",
-      "required": ["provider", "models", "temperature"],
+      "required": [
+        "provider",
+        "models",
+        "temperature"
+      ],
       "properties": {
-        "provider": {"type": "string"},
-        "models": {"type": "object", "required": ["translation", "ocr", "stt"], "additionalProperties": {"type": "string"}},
-        "temperature": {"type": "number", "minimum": 0, "maximum": 2}
+        "provider": {
+          "type": "string"
+        },
+        "models": {
+          "type": "object",
+          "required": [
+            "translation",
+            "ocr",
+            "stt"
+          ],
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        }
       },
       "additionalProperties": false
     },
     "storage": {
       "type": "object",
-      "required": ["provider", "bucketEnv", "zeroEgress"],
+      "required": [
+        "provider",
+        "bucketEnv",
+        "zeroEgress"
+      ],
       "properties": {
-        "provider": {"type": "string"},
-        "bucketEnv": {"type": "string"},
-        "zeroEgress": {"type": "boolean"}
+        "provider": {
+          "type": "string"
+        },
+        "bucketEnv": {
+          "type": "string"
+        },
+        "zeroEgress": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     },
     "editor": {
       "type": "object",
-      "required": ["audioChannels", "duckingGain", "transitionGapSeconds"],
+      "required": [
+        "audioChannels",
+        "duckingGain",
+        "transitionGapSeconds"
+      ],
       "properties": {
-        "audioChannels": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "duckingGain": {"type": "number", "minimum": 0, "maximum": 1},
-        "transitionGapSeconds": {"type": "number", "minimum": 0}
+        "audioChannels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "duckingGain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "transitionGapSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "defaultWidth": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "defaultHeight": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "defaultFps": {
+          "type": "number",
+          "minimum": 1
+        },
+        "defaultSubtitleStyle": {
+          "type": "object",
+          "required": [
+            "fontFamily",
+            "fontSize",
+            "color",
+            "strokeColor",
+            "strokeWidth",
+            "bottomPx"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontSize": {
+              "type": "number",
+              "minimum": 1
+            },
+            "color": {
+              "type": "string"
+            },
+            "strokeColor": {
+              "type": "string"
+            },
+            "strokeWidth": {
+              "type": "number",
+              "minimum": 0
+            },
+            "bottomPx": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
       },
       "additionalProperties": false
     },
     "theme": {
       "type": "object",
-      "required": ["darkBackgroundColor", "darkContainerBackgroundColor", "accentColor", "textColor"],
+      "required": [
+        "darkBackgroundColor",
+        "darkContainerBackgroundColor",
+        "accentColor",
+        "textColor"
+      ],
       "properties": {
-        "darkBackgroundColor": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
-        "darkContainerBackgroundColor": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
-        "accentColor": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
-        "textColor": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+        "darkBackgroundColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "darkContainerBackgroundColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "accentColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "textColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
       },
       "additionalProperties": false
     },
-    "managedFiles": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+    "managedFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "cloudflareAI": {
+      "type": "object",
+      "required": [
+        "ttsModel",
+        "workerPath"
+      ],
+      "properties": {
+        "ttsModel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workerPath": {
+          "type": "string",
+          "pattern": "^/"
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }

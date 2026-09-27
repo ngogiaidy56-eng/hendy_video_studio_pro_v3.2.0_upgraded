@@ -33,5 +33,12 @@ fs.writeFileSync(path.join(root, 'frontend/public/manifest.json'), JSON.stringif
 fs.writeFileSync(path.join(root, 'frontend/index.html'),
 `<!doctype html><html lang="vi"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/><title>${cfg.system.name}</title><meta name="theme-color" content="${cfg.theme.darkBackgroundColor}"/><script src="https://telegram.org/js/telegram-web-app.js"></script></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>`);
 
-fs.writeFileSync(path.join(root, 'worker/wrangler.jsonc'), JSON.stringify({name:'hendy-video-studio-pro-api',main:'src/index.ts',compatibility_date:'2026-09-27',vars:{API_BASE_PATH:cfg.network.apiBasePath}}, null, 2));
+fs.writeFileSync(path.join(root, 'worker/wrangler.jsonc'), JSON.stringify({name:'hendy-video-studio-pro-api',main:'src/index.ts',compatibility_date:'2026-09-27',vars:{API_BASE_PATH:cfg.network.apiBasePath,CLOUDFLARE_TTS_MODEL:cfg.cloudflareAI.ttsModel},ai:{binding:'AI'},dev:{port:cfg.network.workerPort}}, null, 2));
+
+const workerPackagePath = path.join(root, 'worker/package.json');
+const workerPackage = JSON.parse(fs.readFileSync(workerPackagePath, 'utf8'));
+workerPackage.devDependencies ??= {};
+workerPackage.devDependencies['@cloudflare/workers-types'] = cfg.toolchain.workersTypes;
+workerPackage.devDependencies.wrangler = cfg.toolchain.wrangler;
+fs.writeFileSync(workerPackagePath, JSON.stringify(workerPackage, null, 2) + '\n');
 console.log(`SOT synced to ${cfg.managedFiles.length} managed targets.`);
