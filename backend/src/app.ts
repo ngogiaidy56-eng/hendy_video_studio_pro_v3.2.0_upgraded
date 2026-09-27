@@ -13,7 +13,7 @@ export function createApp() {
   app.disable('x-powered-by');
   app.use(cors({origin:(process.env.FRONTEND_ORIGIN || '*').split(',')}));
   app.use(express.json({limit:'4mb'}));
-  app.get('/health',(req,res)=>res.json({ok:true,service:'express-backend',version:'2.4.0',runtime:'workers-node-compat'}));
+  app.get(['/health','/api/health'],(req,res)=>res.json({ok:true,service:'express-backend',version:'2.4.0',runtime:'workers-node-compat'}));
   app.get('/health/ready',(req,res)=>{
     const checks = {
       gemini:Boolean(process.env.GEMINI_API_KEY),
