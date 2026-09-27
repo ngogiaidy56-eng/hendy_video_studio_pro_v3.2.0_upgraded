@@ -42,7 +42,8 @@
   "storage": {
     "provider": "cloudflare-r2",
     "bucketEnv": "R2_BUCKET",
-    "zeroEgress": true
+    "zeroEgress": true,
+    "bucketName": "hendy-video-studio-pro-media"
   },
   "editor": {
     "audioChannels": [
