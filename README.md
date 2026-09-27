@@ -66,7 +66,7 @@ Frontend Pages nên là project riêng: root directory `frontend`, build command
 
 ## Production release gate
 
-GitHub Actions thực hiện validate → sync → typecheck → build → health check → deploy. Rollback là một thao tác riêng và không cho phép agent tự ý chạy arbitrary commands.
+Cloudflare Workers Build thực hiện release gate → build → deploy theo `bun run worker:deploy`. Rollback là một thao tác riêng và không cho phép agent tự ý chạy arbitrary commands.
 
 ## Download gateway
 
