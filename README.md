@@ -49,6 +49,21 @@ Gửi WebSocket message:
 
 Server sẽ dựng một workspace tạm trong `.tmp/` và chạy build/check theo policy. Không deploy production từ sandbox.
 
+## Cloudflare build/deploy
+
+Repo là monorepo. Bản này dùng `wrangler.jsonc` ở root để trỏ rõ vào `worker/src/index.ts`.
+
+Workers Build settings:
+
+```text
+Build command: bun run build
+Deploy command: bun run deploy
+```
+
+Không dùng `npm install` làm build command sau `bun install`; npm có thể mutate dependency tree/lockfile.
+
+Frontend Pages nên là project riêng: root directory `frontend`, build command `bun run build`, output directory `dist`; không chạy Worker deploy trong Pages project.
+
 ## Production release gate
 
 GitHub Actions thực hiện validate → sync → typecheck → build → health check → deploy. Rollback là một thao tác riêng và không cho phép agent tự ý chạy arbitrary commands.
