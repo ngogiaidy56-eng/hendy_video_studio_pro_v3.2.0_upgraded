@@ -8,5 +8,8 @@
     "FRONTEND_ORIGIN":"https://hendy-video-studio-pro.ngogiaidy56.workers.dev",
     "PUBLIC_APP_URL":"https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
   },
+  "secrets":{
+    "required":["GEMINI_API_KEY","TELEGRAM_BOT_TOKEN","R2_ACCOUNT_ID","R2_ACCESS_KEY_ID","R2_SECRET_ACCESS_KEY","ADMIN_USER_IDS"]
+  },
   "dev":{"port":8787}
 }
