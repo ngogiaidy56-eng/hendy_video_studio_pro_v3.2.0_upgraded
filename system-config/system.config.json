@@ -88,5 +88,6 @@
   "cloudflareAI": {
     "ttsModel": "@cf/myshell-ai/melotts",
     "workerPath": "/api/ai/tts"
-  }
+  },
+  "publicAppUrl": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
 }
