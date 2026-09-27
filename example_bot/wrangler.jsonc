@@ -3,6 +3,7 @@
   "name":"hendy-video-studio-pro-telegram",
   "main":"src/worker.ts",
   "compatibility_date":"2026-09-27",
-  "vars":{"ADMIN_APP_URL":"https://hendy-video-studio-pro.workers.dev"},
+  "vars":{"ADMIN_APP_URL":"https://hendy-video-studio-pro.ngogiaidy56.workers.dev"},
+  "secrets":{"required":["TELEGRAM_BOT_TOKEN"]},
   "dev":{"port":8791}
 }
