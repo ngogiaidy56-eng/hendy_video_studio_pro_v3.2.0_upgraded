@@ -21,6 +21,8 @@
     "editor:check": "npm --workspace frontend run typecheck",
     "backend:check": "npm --workspace backend run typecheck",
     "worker:check": "npm --workspace worker run typecheck",
+    "worker:deploy": "wrangler deploy --config worker/wrangler.jsonc",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
     "release:gate": "npm run config:validate && npm run config:sync && npm run typecheck && npm run build",
     "source:export": "node system-config/scripts/export-source-md.mjs"
   },
