@@ -24,6 +24,8 @@ run('RELEASE GATE · validate + sync + build',['run','build']);
 // deploys only the gateway Worker. The other service Workers have their own
 // Wrangler configs and should be connected to separate Workers Builds projects
 // (or deployed together from a local/CI runner with Cloudflare credentials).
+// Cloudflare Workers Builds sets WORKERS_CI=1 and WRANGLER_CI_OVERRIDE_NAME for the single connected Worker.
+// Keep this branch explicit so a monorepo build never deploys another service under the connected Worker name.
 const isWorkersBuild = process.env.WORKERS_CI === '1';
 const connectedName = process.env.WRANGLER_CI_OVERRIDE_NAME?.trim();
 
