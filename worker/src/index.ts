@@ -11,7 +11,7 @@ function json(data: unknown, init?: ResponseInit) {
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
-    if (req.method === 'GET' && url.pathname === '/health') {
+    if (req.method === 'GET' && (url.pathname === '/health' || url.pathname === '/api/ai/health')) {
       return json({ ok: true, edge: true, version: '2.4.0', ai: true });
     }
     if (req.method === 'POST' && url.pathname === '/api/ai/tts') {
