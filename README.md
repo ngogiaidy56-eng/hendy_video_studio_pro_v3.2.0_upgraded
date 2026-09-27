@@ -91,3 +91,8 @@ Cloudflare recommends generating Worker binding types with `wrangler types` for 
 ## Full cloud production
 
 Use `PRODUCTION_SETUP.md` for the five-runtime deployment, required secrets, Telegram webhook and E2E health check. The React editor, Express API, AI Worker, MCP Worker and Telegram Worker are deployed behind the root gateway.
+
+
+## Current Cloudflare Build command
+
+The existing Workers Build deploy command `bun run worker:deploy` is intentionally retained. It now runs the release gate (`config:validate` → `config:sync` → frontend/backend/worker/MCP build) and then deploys Backend → AI Edge → MCP → Telegram → Gateway in order.
