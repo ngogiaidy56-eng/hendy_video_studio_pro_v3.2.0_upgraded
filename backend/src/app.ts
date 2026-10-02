@@ -8,6 +8,7 @@ import {smartDownload} from './controllers/downloadController.js';
 import {geminiRouter} from './routes/gemini.js';
 import {cloudflareRouter} from './routes/cloudflare.js';
 import {mcpRouter} from './routes/mcp.js';
+import {infraRouter} from './routes/infrastructure.js';
 
 export function createApp() {
   const app = express();
@@ -29,6 +30,7 @@ export function createApp() {
   app.use('/api/v1/projects',projectRouter);
   app.use('/api/gemini',geminiRouter);
   app.use('/api/cloudflare',cloudflareRouter);
+  app.use('/api/infra',infraRouter);
   app.use('/mcp',mcpRouter);
   app.get('/tai-app',smartDownload);
   app.use((err:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{

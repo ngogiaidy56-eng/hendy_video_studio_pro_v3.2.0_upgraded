@@ -1,24 +1,63 @@
 {
-  "name": "AI Studio Pro",
-  "short_name": "AI Studio Pro",
-  "description": "AI video editor, Vietnamese subtitles, TTS voiceover and multi-channel audio studio.",
+  "id": "/",
+  "name": "Hendy Video Studio Pro",
+  "short_name": "HendyVideo",
+  "description": "Professional AI-powered video and subtitle editing studio with multi-track timeline, Vietnamese text enhancement, and Gemini audio processing.",
   "lang": "vi",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "theme_color": "#070b12",
-  "background_color": "#070b12",
+  "theme_color": "#0a101d",
+  "background_color": "#0a101d",
+  "categories": ["multimedia", "productivity", "utilities", "video"],
   "icons": [
     {
-      "src": "/logo192.png",
+      "src": "/pwa-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/logo512.png",
+      "src": "/pwa-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dự án mới",
+      "short_name": "Dự án mới",
+      "description": "Tạo video mới ngay lập tức",
+      "url": "/?action=new",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Phụ đề tự động",
+      "short_name": "Phụ đề AI",
+      "description": "Nhận diện giọng nói và tạo phụ đề tự động",
+      "url": "/?action=autosub",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Lab",
+      "short_name": "AI Lab",
+      "description": "Công cụ sáng tạo video & hiệu ứng AI",
+      "url": "/?tab=ailab",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
     }
   ]
 }

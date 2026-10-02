@@ -1,3 +1,10 @@
 /// <reference types="vite/client" />
-declare global { interface Window { Telegram?: { WebApp?: any } } }
+/// <reference types="vite-plugin-pwa/client" />
+
+declare global {
+  interface Window {
+    Telegram?: { WebApp?: any };
+  }
+}
+
 export {};
