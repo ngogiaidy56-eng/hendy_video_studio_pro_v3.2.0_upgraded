@@ -10,7 +10,7 @@
     {
       "binding": "DB",
       "database_name": "telegram-bot-db",
-      "database_id": "telegram-bot-db"
+      "database_id": "4925d076-24b7-4d08-a63c-342766ba4036"
     }
   ],
   "secrets": {
