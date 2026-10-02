@@ -6,10 +6,18 @@
   "vars": {
     "ADMIN_APP_URL": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "telegram-bot-db",
+      "database_id": "telegram-bot-db"
+    }
+  ],
   "secrets": {
     "required": [
       "TELEGRAM_BOT_TOKEN",
-      "MCP_OTP_SECRET"
+      "ADMIN_ID",
+      "TELEGRAM_SECRET_TOKEN"
     ]
   },
   "dev": {
