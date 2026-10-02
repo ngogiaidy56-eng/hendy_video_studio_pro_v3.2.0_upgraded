@@ -22,10 +22,10 @@ type TelemetryEvent = {
 };
 
 const STATUS_META: Record<GateStatus, { label: string; note: string }> = {
-  IDLE: { label: 'IDLE', note: 'Sandbox đang chờ lệnh' },
-  RUNNING: { label: 'RUNNING', note: 'Đang kiểm tra cô lập' },
-  NOMINAL: { label: 'NOMINAL', note: 'Các gate tự động đã vượt qua' },
-  FAILED: { label: 'FAILED', note: 'Đã chặn đồng bộ' },
+  IDLE: { label: 'CHỜ LỆNH', note: 'Sandbox đang chờ lệnh' },
+  RUNNING: { label: 'ĐANG XỬ LÝ', note: 'Đang kiểm tra và chạy quy trình' },
+  NOMINAL: { label: 'CHUẨN (NOMINAL)', note: 'Các bước kiểm định tự động đã vượt qua' },
+  FAILED: { label: 'LỖI (FAILED)', note: 'Phát hiện lỗi — đã chặn đồng bộ' },
 };
 
 export const SystemControlPanel: React.FC = () => {
@@ -33,7 +33,7 @@ export const SystemControlPanel: React.FC = () => {
   const [connected, setConnected] = useState(false);
   const [status, setStatus] = useState<GateStatus>('IDLE');
   const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState('Sandbox offline');
+  const [message, setMessage] = useState('Sandbox ngoại tuyến');
   const [events, setEvents] = useState<TelemetryEvent[]>([]);
   const [busy, setBusy] = useState(false);
   const [wsOverride, setWsOverride] = useState('');
@@ -64,7 +64,7 @@ export const SystemControlPanel: React.FC = () => {
         if (cancelled) return;
         setConnected(true);
         setBusy(false);
-        setMessage('Sandbox connected');
+        setMessage('Đã kết nối Sandbox');
         ws.send(JSON.stringify({ command: 'status' }));
       };
 
@@ -97,7 +97,7 @@ export const SystemControlPanel: React.FC = () => {
         if (cancelled) return;
         setConnected(false);
         setBusy(false);
-        setMessage('Sandbox unavailable');
+        setMessage('Sandbox chưa sẵn sàng');
       };
 
       ws.onclose = () => {
@@ -108,7 +108,7 @@ export const SystemControlPanel: React.FC = () => {
     } catch {
       setConnected(false);
       setBusy(false);
-      setMessage('WebSocket endpoint invalid');
+      setMessage('Địa chỉ WebSocket không hợp lệ');
     }
 
     return () => {
@@ -123,7 +123,7 @@ export const SystemControlPanel: React.FC = () => {
   const command = (name: 'dry-run' | 'auto-patch' | 'sync') => {
     const ws = socketRef.current;
     if (!ws || ws.readyState !== WebSocket.OPEN) {
-      setMessage('Hãy chạy System Sandbox trước');
+      setMessage('Hãy khởi chạy System Sandbox trước');
       return;
     }
     setBusy(true);
@@ -136,7 +136,7 @@ export const SystemControlPanel: React.FC = () => {
     const value = wsOverride.trim();
     if (value) localStorage.setItem('systemSandboxWs', value);
     else localStorage.removeItem('systemSandboxWs');
-    setMessage(value ? 'Custom endpoint saved' : 'Using Source-of-Truth endpoint');
+    setMessage(value ? 'Đã lưu cổng kết nối riêng' : 'Đang dùng cổng mặc định SOT');
   };
 
   const statusIcon =
@@ -151,11 +151,11 @@ export const SystemControlPanel: React.FC = () => {
         type="button"
         onClick={() => setOpen(v => !v)}
         className="fixed right-4 bottom-4 z-[70] group flex items-center gap-2 rounded-full border border-slate-700/80 bg-[#09111c]/95 px-3 py-2 text-[11px] font-black text-slate-100 shadow-2xl shadow-black/30 backdrop-blur-xl hover:border-cyan-500/40 hover:bg-[#111a28] transition-all cursor-pointer"
-        title="System Activity Control"
+        title="Bảng điều khiển hệ thống"
       >
         <span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
         <Activity className="w-3.5 h-3.5 text-cyan-400" />
-        <span className="hidden sm:inline">SYSTEM</span>
+        <span className="hidden sm:inline">HỆ THỐNG</span>
         <span className="hidden md:inline text-slate-500">·</span>
         <span className="hidden md:inline text-[10px] text-slate-400">{status}</span>
       </button>
@@ -169,10 +169,10 @@ export const SystemControlPanel: React.FC = () => {
               </div>
               <div className="min-w-0">
                 <div className="text-xs font-black tracking-tight flex items-center gap-2">
-                  Advanced System Activity
-                  <span className="px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[9px]">CRM CONTROL</span>
+                  Trung tâm kiểm soát hệ thống
+                  <span className="px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[9px]">ĐIỀU HÀNH CRM</span>
                 </div>
-                <div className="text-[10px] text-slate-500 truncate">Single Source of Truth · v{SYSTEM_CONFIG.app.version}</div>
+                <div className="text-[10px] text-slate-500 truncate">Nguồn chuẩn duy nhất (SOT) · v{SYSTEM_CONFIG.app.version}</div>
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
@@ -181,41 +181,41 @@ export const SystemControlPanel: React.FC = () => {
           <div className="p-3 space-y-3">
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Release Gate</div>
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500"><ShieldCheck className="w-3.5 h-3.5 text-cyan-400" /> Cổng kiểm định phát hành</div>
                 <div className="mt-2 flex items-center gap-2 text-sm font-bold">{statusIcon}<span>{STATUS_META[status].label}</span></div>
                 <div className="mt-1 text-[10px] text-slate-500 truncate">{message || STATUS_META[status].note}</div>
                 <div className="mt-2 h-1.5 rounded-full bg-slate-900 overflow-hidden"><div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all" style={{ width: `${progress}%` }} /></div>
               </div>
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500"><Wifi className="w-3.5 h-3.5 text-emerald-400" /> Sandbox</div>
-                <div className="mt-2 flex items-center gap-2 text-sm font-bold"><span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />{connected ? 'CONNECTED' : 'OFFLINE'}</div>
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500"><Wifi className="w-3.5 h-3.5 text-emerald-400" /> Môi trường Sandbox</div>
+                <div className="mt-2 flex items-center gap-2 text-sm font-bold"><span className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />{connected ? 'ĐÃ KẾT NỐI' : 'NGOẠI TUYẾN'}</div>
                 <div className="mt-1 text-[10px] text-slate-500 truncate">{wsUrl}</div>
                 <div className="mt-2 flex flex-wrap gap-1">{enabledPlatforms.map(p => <span key={p} className="rounded border border-slate-800 bg-slate-900 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-slate-400">{p}</span>)}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-              <button disabled={busy || !connected} onClick={() => command('dry-run')} className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-2 text-[10px] font-bold text-slate-300 hover:border-cyan-500/30 hover:text-cyan-200 disabled:opacity-40 cursor-pointer">DRY-RUN</button>
-              <button disabled={busy || !connected} onClick={() => command('auto-patch')} className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-2 text-[10px] font-bold text-slate-300 hover:border-amber-500/30 hover:text-amber-200 disabled:opacity-40 cursor-pointer">AUTO-PATCH</button>
-              <button disabled={busy || !connected} onClick={() => command('sync')} className="rounded-lg border border-emerald-500/30 bg-emerald-950/20 px-2 py-2 text-[10px] font-black text-emerald-300 hover:bg-emerald-950/40 disabled:opacity-40 cursor-pointer"><Wrench className="inline w-3 h-3 mr-1" />SYNC ALL</button>
+              <button disabled={busy || !connected} onClick={() => command('dry-run')} className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-2 text-[10px] font-bold text-slate-300 hover:border-cyan-500/30 hover:text-cyan-200 disabled:opacity-40 cursor-pointer">KIỂM TRA (DRY-RUN)</button>
+              <button disabled={busy || !connected} onClick={() => command('auto-patch')} className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-2 text-[10px] font-bold text-slate-300 hover:border-amber-500/30 hover:text-amber-200 disabled:opacity-40 cursor-pointer">TỰ ĐỘNG VÁ</button>
+              <button disabled={busy || !connected} onClick={() => command('sync')} className="rounded-lg border border-emerald-500/30 bg-emerald-950/20 px-2 py-2 text-[10px] font-black text-emerald-300 hover:bg-emerald-950/40 disabled:opacity-40 cursor-pointer"><Wrench className="inline w-3 h-3 mr-1" />ĐỒNG BỘ TẤT CẢ</button>
             </div>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/55 p-3 space-y-2">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5"><Terminal className="w-3.5 h-3.5 text-indigo-400" /> WebSocket Endpoint</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5"><Terminal className="w-3.5 h-3.5 text-indigo-400" /> Cổng kết nối WebSocket</div>
               <div className="flex gap-2">
                 <input value={wsOverride} onChange={e => setWsOverride(e.target.value)} placeholder={wsUrl} className="min-w-0 flex-1 rounded-lg border border-slate-800 bg-slate-950 px-2.5 py-2 text-[10px] font-mono text-slate-300" />
-                <button onClick={saveOverride} className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-[10px] font-bold text-slate-200 hover:bg-slate-700 cursor-pointer">Save</button>
+                <button onClick={saveOverride} className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-[10px] font-bold text-slate-200 hover:bg-slate-700 cursor-pointer">Lưu</button>
               </div>
             </div>
 
             <div className="rounded-xl border border-slate-800 overflow-hidden">
               <div className="px-3 py-2 border-b border-slate-800 bg-slate-900/70 flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Live Telemetry</span>
-                <span className="text-[10px] text-slate-600">{events.length} events</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Nhật ký sự kiện (Telemetry)</span>
+                <span className="text-[10px] text-slate-600">{events.length} sự kiện</span>
               </div>
               <div className="max-h-48 overflow-y-auto divide-y divide-slate-900">
                 {events.length === 0 ? (
-                  <div className="px-3 py-6 text-center text-[10px] text-slate-600">No telemetry yet.</div>
+                  <div className="px-3 py-6 text-center text-[10px] text-slate-600">Chưa có dữ liệu sự kiện.</div>
                 ) : events.slice().reverse().map((item, idx) => (
                   <div key={`${item.ts ?? 'e'}-${idx}`} className="px-3 py-2 grid grid-cols-[auto_1fr] gap-2">
                     <span className="font-mono text-[9px] text-slate-600">{item.ts ? new Date(item.ts).toLocaleTimeString() : '--:--:--'}</span>

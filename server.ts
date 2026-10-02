@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import http from 'node:http';
 import path from 'node:path';
 import fs from 'node:fs';
 import express from 'express';
@@ -6,6 +7,7 @@ import { createApp } from './backend/src/app.js';
 
 async function startServer() {
   const app = createApp();
+  const httpServer = http.createServer(app);
   const PORT = 3000;
   const isProd = process.env.NODE_ENV === 'production';
 
@@ -16,14 +18,16 @@ async function startServer() {
       server: {
         middlewareMode: true,
         host: '0.0.0.0',
-        hmr: false,
+        hmr: {
+          server: httpServer,
+        },
       },
       appType: 'spa',
     });
     app.use(vite.middlewares);
 
     app.use(async (req, res, next) => {
-      if (req.method !== 'GET' || req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/health') || req.originalUrl.startsWith('/tai-app') || req.originalUrl.startsWith('/mcp')) {
+      if (req.method !== 'GET' || req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/health')) {
         return next();
       }
       try {
@@ -50,7 +54,7 @@ async function startServer() {
     }
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Server listening on http://0.0.0.0:${PORT}`);
   });
 }
