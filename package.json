@@ -12,7 +12,9 @@
     "build": "npm run config:sync && npm --workspace frontend run build",
     "start": "tsx server.ts",
     "lint": "npm --workspace frontend run typecheck",
-    "typecheck": "npm --workspace frontend run typecheck"
+    "typecheck": "npm --workspace frontend run typecheck",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "worker:deploy": "node system-config/scripts/deploy-all.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
