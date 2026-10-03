@@ -1,0 +1,32 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "hendy-video-studio-pro-backend",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-02",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "APP_VERSION": "3.2.0",
+    "FRONTEND_ORIGIN": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev",
+    "PUBLIC_APP_URL": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev",
+    "R2_BUCKET": "hendy-video-studio-pro-media",
+    "R2_ACCOUNT_ID": "918ff2f016938fc978ed23b96505b21e",
+    "R2_ENDPOINT": "https://918ff2f016938fc978ed23b96505b21e.r2.cloudflarestorage.com",
+    "MAX_AI_UPLOAD_BYTES": "104857600",
+    "TELEGRAM_OTP_TTL_SECONDS": "60"
+  },
+  "secrets": {
+    "required": [
+      "GEMINI_API_KEY",
+      "TELEGRAM_BOT_TOKEN",
+      "R2_ACCESS_KEY_ID",
+      "R2_SECRET_ACCESS_KEY",
+      "ADMIN_USER_IDS",
+      "MCP_OTP_SECRET"
+    ]
+  },
+  "dev": {
+    "port": 8787
+  }
+}
