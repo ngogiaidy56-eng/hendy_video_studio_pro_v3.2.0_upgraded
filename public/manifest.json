@@ -1,7 +1,7 @@
 {
-  "name": "AI Studio Pro",
-  "short_name": "AI Studio Pro",
-  "description": "AI video editor, Vietnamese subtitles, TTS voiceover and multi-channel audio studio.",
+  "name": "Hendy Video Studio Pro",
+  "short_name": "Hendy Studio Pro",
+  "description": "AI video editor, Vietnamese subtitles, TTS voiceover, multi-channel audio and Cloudflare production workspace.",
   "lang": "vi",
   "start_url": "/",
   "scope": "/",

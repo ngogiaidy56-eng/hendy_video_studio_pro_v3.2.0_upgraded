@@ -1,8 +1,13 @@
 {
-  "$schema":"../../node_modules/wrangler/config-schema.json",
-  "name":"hendy-video-studio-pro-mcp",
-  "main":"src/worker.ts",
-  "compatibility_date":"2026-09-27",
-  "vars":{"PUBLIC_APP_URL":"https://hendy-video-studio-pro.workers.dev"},
-  "dev":{"port":8790}
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "hendy-video-studio-pro-mcp",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-10-02",
+  "vars": {
+    "APP_VERSION": "3.2.0",
+    "PUBLIC_APP_URL": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
+  },
+  "dev": {
+    "port": 8790
+  }
 }

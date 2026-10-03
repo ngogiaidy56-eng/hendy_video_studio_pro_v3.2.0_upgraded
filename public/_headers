@@ -1,12 +1,13 @@
-/* AI Studio Pro generated from system-config */
+/* Hendy Video Studio Pro 3.2.0 */
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: microphone=(self), camera=(self)
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://telegram.org; connect-src 'self' https://*.workers.dev wss:; img-src 'self' data: blob: https:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; worker-src 'self' blob:; frame-src https://t.me; object-src 'none'; base-uri 'self'
+
 /manifest.json
   Content-Type: application/manifest+json
   Cache-Control: public, max-age=300
 
 /sw.js
   Cache-Control: no-cache
-
-/
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: microphone=(self), camera=(self)
