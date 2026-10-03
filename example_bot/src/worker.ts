@@ -1,6 +1,8 @@
 export interface Env {
   TELEGRAM_BOT_TOKEN: string;
-  ADMIN_ID?: string;
+  ADMIN_USER_IDS?: string;
+  ADMIN_ID?: string; // legacy alias
+  APP_VERSION?: string;
   TELEGRAM_SECRET_TOKEN?: string;
   ADMIN_APP_URL?: string;
   MCP_OTP_SECRET?: string;
@@ -13,7 +15,7 @@ export default {
 
     // Health check endpoint
     if (url.pathname === '/health' || url.pathname === '/telegram/health') {
-      return Response.json({ ok: true, service: 'telegram-bot', version: '3.1.0' });
+      return Response.json({ ok: true, service: 'telegram-bot', version: env.APP_VERSION || '3.2.0' });
     }
 
     if (request.method !== 'POST' || (url.pathname !== '/webhook' && url.pathname !== '/telegram/webhook')) {
@@ -49,10 +51,10 @@ export default {
 // ==========================================
 
 // Giao diện Menu Chính
-function getMainMenuData(firstName: string, isAdmin = false) {
+function getMainMenuData(firstName: string, isAdmin = false, version = '3.2.0') {
   const text =
     `👋 <b>Xin chào ${escapeHtml(firstName)}!</b>\n\n` +
-    `Chào mừng bạn đến với <b>Trung tâm kiểm soát hệ thống (SOT v3.1.0)</b>.\n` +
+    `Chào mừng bạn đến với <b>Trung tâm kiểm soát hệ thống (SOT v${version})</b>.\n` +
     `<i>Nguồn chuẩn duy nhất - Điều hành CRM</i>`;
 
   const inline_keyboard: Array<Array<{ text: string; callback_data?: string; url?: string }>> = [
@@ -61,7 +63,7 @@ function getMainMenuData(firstName: string, isAdmin = false) {
       { text: '💼 Điều hành CRM', callback_data: 'view_crm' }
     ],
     [
-      { text: '🎬 Mở Video Studio Pro', url: 'https://api.hendyvideo.studio' },
+      { text: '🎬 Mở Video Studio Pro', url: 'https://hendy-video-studio-pro.ngogiaidy56.workers.dev' },
       { text: '📊 Trạng thái SOT', callback_data: 'view_sot' }
     ]
   ];
@@ -75,14 +77,14 @@ function getMainMenuData(firstName: string, isAdmin = false) {
   return { text, replyMarkup: { inline_keyboard } };
 }
 
-// Bảng Trung tâm Kiểm soát SOT v3.1.0
-async function getSOTControlPanelData(env: Env) {
+// Bảng Trung tâm Kiểm soát SOT
+async function getSOTControlPanelData(env: Env, version = env.APP_VERSION || '3.2.0') {
   const wsUrl = (await getSetting(env, 'ws_url')) || 'ws://127.0.0.1:8799/ws';
   const dryRunStatus = (await getSetting(env, 'dry_run_status')) || 'CHỜ LỆNH';
   const sandboxStatus = (await getSetting(env, 'sandbox_status')) || '🔴 NGOẠI TUYẾN';
 
   const text =
-    `🛡️ <b>TRUNG TÂM KIỂM SOÁT HỆ THỐNG</b> | <code>SOT v3.1.0</code>\n` +
+    `🛡️ <b>TRUNG TÂM KIỂM SOÁT HỆ THỐNG</b> | <code>SOT v${version}</code>\n` +
     `<i>Nguồn chuẩn duy nhất - ĐIỀU HÀNH CRM</i>\n\n` +
     `🛡️ <b>Cổng kiểm định phát hành:</b> <code>${dryRunStatus}</code>\n` +
     `📡 <b>Môi trường Sandbox:</b> <b>${sandboxStatus}</b>\n` +
@@ -120,7 +122,7 @@ async function getAdminPanelData(env: Env) {
 
   const text =
     `⚙️ <b>BẢNG ĐIỀU HÀNH ADMIN</b>\n\n` +
-    `ID Admin: <code>${env.ADMIN_ID || 'Chưa thiết lập'}</code>\n` +
+    `ID Admin: <code>${escapeHtml(adminIdsLabel(env))}</code>\n` +
     `Trạng thái máy chủ: <b>${statusBadge}</b>\n\n` +
     `<i>Chọn tác vụ quản trị:</i>`;
 
@@ -151,7 +153,7 @@ async function handleMessage(message: any, env: Env): Promise<void> {
   const username = message.from?.username || '';
   const firstName = message.from?.first_name || '';
   const text = String(message.text || '').trim();
-  const isAdmin = Boolean(env.ADMIN_ID && String(userId) === String(env.ADMIN_ID));
+  const isAdmin = isAdminUser(env, userId);
 
   // Lưu thông tin người dùng và lịch sử chat vào D1
   try {
@@ -199,7 +201,7 @@ async function handleMessage(message: any, env: Env): Promise<void> {
   }
 
   // Lệnh /start hoặc tin nhắn khác: hiển thị Menu Chính
-  const { text: mainText, replyMarkup } = getMainMenuData(firstName, isAdmin);
+  const { text: mainText, replyMarkup } = getMainMenuData(firstName, isAdmin, env.APP_VERSION || '3.2.0');
   await sendMessageWithKeyboard(env.TELEGRAM_BOT_TOKEN, chatId, mainText, replyMarkup);
 }
 
@@ -213,7 +215,7 @@ async function handleCallbackQuery(callbackQuery: any, env: Env): Promise<void> 
   const messageId = callbackQuery.message?.message_id;
   const firstName = callbackQuery.from?.first_name || '';
   const action = callbackQuery.data;
-  const isAdmin = Boolean(env.ADMIN_ID && String(userId) === String(env.ADMIN_ID));
+  const isAdmin = isAdminUser(env, userId);
 
   if (!chatId || !messageId) return;
 
@@ -221,14 +223,14 @@ async function handleCallbackQuery(callbackQuery: any, env: Env): Promise<void> 
 
   // 1. Nút Quay lại Menu Chính
   if (action === 'back_to_main') {
-    const { text, replyMarkup } = getMainMenuData(firstName, isAdmin);
+    const { text, replyMarkup } = getMainMenuData(firstName, isAdmin, env.APP_VERSION || '3.2.0');
     await editMessageText(env.TELEGRAM_BOT_TOKEN, chatId, messageId, text, replyMarkup);
     return;
   }
 
   // 2. Mở Trung tâm Kiểm soát SOT Panel
   if (action === 'view_sot_panel') {
-    const { text, replyMarkup } = await getSOTControlPanelData(env);
+    const { text, replyMarkup } = await getSOTControlPanelData(env, env.APP_VERSION || '3.2.0');
     await editMessageText(env.TELEGRAM_BOT_TOKEN, chatId, messageId, text, replyMarkup);
     return;
   }
@@ -239,7 +241,7 @@ async function handleCallbackQuery(callbackQuery: any, env: Env): Promise<void> 
     await logEvent(env, userId, 'Chạy kiểm định Dry-Run');
     await answerCallbackQuery(env.TELEGRAM_BOT_TOKEN, queryId, '🧪 Đã phát lệnh Kiểm tra Dry-Run!');
 
-    const { text, replyMarkup } = await getSOTControlPanelData(env);
+    const { text, replyMarkup } = await getSOTControlPanelData(env, env.APP_VERSION || '3.2.0');
     await editMessageText(env.TELEGRAM_BOT_TOKEN, chatId, messageId, text, replyMarkup);
     return;
   }
@@ -267,7 +269,7 @@ async function handleCallbackQuery(callbackQuery: any, env: Env): Promise<void> 
     await setSetting(env, 'sandbox_status', newStatus);
     await logEvent(env, userId, `Chuyển trạng thái Sandbox: ${newStatus}`);
 
-    const { text, replyMarkup } = await getSOTControlPanelData(env);
+    const { text, replyMarkup } = await getSOTControlPanelData(env, env.APP_VERSION || '3.2.0');
     await editMessageText(env.TELEGRAM_BOT_TOKEN, chatId, messageId, text, replyMarkup);
     return;
   }
@@ -498,6 +500,21 @@ async function answerCallbackQuery(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ callback_query_id: callbackQueryId, text, show_alert: showAlert })
   });
+}
+
+
+function adminIds(env: Env): Set<string> {
+  const raw = env.ADMIN_USER_IDS || env.ADMIN_ID || '';
+  return new Set(raw.split(',').map(v => v.trim()).filter(Boolean));
+}
+
+function isAdminUser(env: Env, userId: number | string | undefined): boolean {
+  return userId != null && adminIds(env).has(String(userId));
+}
+
+function adminIdsLabel(env: Env): string {
+  const ids = [...adminIds(env)];
+  return ids.length ? ids.join(', ') : 'Chưa thiết lập';
 }
 
 function escapeHtml(str: string): string {

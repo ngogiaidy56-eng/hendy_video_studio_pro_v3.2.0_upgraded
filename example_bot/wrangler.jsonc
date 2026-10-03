@@ -2,21 +2,23 @@
   "$schema": "../node_modules/wrangler/config-schema.json",
   "name": "hendy-video-studio-pro-telegram",
   "main": "src/worker.ts",
-  "compatibility_date": "2026-09-27",
+  "compatibility_date": "2026-10-02",
   "vars": {
+    "APP_VERSION": "3.2.0",
     "ADMIN_APP_URL": "https://hendy-video-studio-pro.ngogiaidy56.workers.dev"
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "telegram-bot-db",
-      "database_id": "4925d076-24b7-4d08-a63c-342766ba4036"
+      "databaseName": "telegram-bot-db",
+      "databaseId": "4925d076-24b7-4d08-a63c-342766ba4036"
     }
   ],
   "secrets": {
     "required": [
       "TELEGRAM_BOT_TOKEN",
-      "ADMIN_ID",
+      "ADMIN_USER_IDS",
+      "MCP_OTP_SECRET",
       "TELEGRAM_SECRET_TOKEN"
     ]
   },

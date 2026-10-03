@@ -3,5 +3,6 @@
   "description": "Professional AI-powered video and subtitle editing studio with multi-track timeline, Vietnamese text enhancement, and Gemini audio processing.",
   "capabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  ],
+  "version": "3.2.0"
 }

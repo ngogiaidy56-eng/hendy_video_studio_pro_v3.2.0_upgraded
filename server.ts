@@ -8,7 +8,7 @@ import { createApp } from './backend/src/app.js';
 async function startServer() {
   const app = createApp();
   const httpServer = http.createServer(app);
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT || 3000);
   const isProd = process.env.NODE_ENV === 'production';
 
   if (!isProd) {

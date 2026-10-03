@@ -2,6 +2,7 @@ export interface Env {
   API_BASE_PATH: string;
   AI: Ai;
   CLOUDFLARE_TTS_MODEL?: string;
+  APP_VERSION?: string;
 }
 
 function json(data: unknown, init?: ResponseInit) {
@@ -18,7 +19,7 @@ export default {
     const url = new URL(req.url);
 
     if (req.method === 'GET' && (url.pathname === '/health' || url.pathname === '/api/ai/health')) {
-      return json({ ok: true, edge: true, version: '2.4.0', ai: true });
+      return json({ ok: true, edge: true, version: env.APP_VERSION || '3.2.0', ai: true });
     }
 
     if (req.method === 'POST' && url.pathname === '/api/ai/tts') {

@@ -1,79 +1,58 @@
-# AI Studio Pro — System SOT Architecture
+# Hendy Video Studio Pro v3.2.0 — System Architecture
 
-## Single Source of Truth
+## Production topology
 
-The root authority is:
+```text
+                         ┌────────────────────────────┐
+                         │ Browser / PWA / Telegram   │
+                         └─────────────┬──────────────┘
+                                       │ HTTPS
+                                       ▼
+                    ┌──────────────────────────────────┐
+                    │ hend­­y-video-studio-pro          │
+                    │ Gateway Worker + Static Assets    │
+                    │ frontend/dist                     │
+                    └──────┬────────┬────────┬──────────┘
+                           │        │        │
+             /api/*        │        │        └── /telegram/* ─► Telegram Worker ─► D1
+                           │        └────────── /mcp/* ───────► MCP Worker
+                           └──────────────── /api/ai/* ──────► AI Worker ─► Workers AI
+                           │
+                           └──────────────── /api/* ─────────► Backend Worker
+                                                        ├── Gemini API
+                                                        └── Cloudflare R2
 
-`system-config/system.config.json`
-
-This file owns application identity, design tokens, layout values, release status, sandbox endpoint, Cloudflare build settings, PWA settings, and native platform IDs.
-
-## Managed outputs
-
-The generator keeps these derived files synchronized:
-
-- `package.json`
-- `capacitor.config.ts`
-- `public/manifest.json`
-- `public/_headers`
-- `public/sw.js`
-- `wrangler.jsonc`
-- `index.html`
-- `src/generated/system-config.ts`
-- `src/generated/system-theme.css`
-
-Do not hand-edit derived values when they are represented in the SOT.
-
-## Safety gate
-
-The local sandbox performs this sequence:
-
-1. reload SOT
-2. optional safe auto-patch
-3. SOT validation
-4. strict configuration dry-run
-5. managed-file sync when explicitly requested or when watch mode is active
-6. TypeScript check + Vite production build
-7. emit `GATE_NOMINAL`
-8. only then emit `SYSTEM_CONFIG_SYNCED`
-
-A failed gate blocks the final sync broadcast.
-
-`NOMINAL` means the configured automated checks passed. It is not a promise of absolute runtime safety.
-
-## WebSocket sandbox
-
-Default endpoint:
-
-`ws://127.0.0.1:8799/ws`
-
-Start it in automatic watch mode:
-
-```bash
-npm run system:sandbox
+ Local only: 127.0.0.1:8799/ws → Sandbox / AutoPatch / strict dry-run
 ```
 
-The browser `SYSTEM` control panel can issue:
+## Five Cloudflare Workers
 
-- `DRY-RUN`
-- `AUTO-PATCH`
-- `SYNC ALL`
+| Worker | Root | Role |
+|---|---|---|
+| `hendy-video-studio-pro` | `/` | Gateway, React assets, routing |
+| `hendy-video-studio-pro-backend` | `/backend/` | Express API, Gemini, R2 |
+| `hendy-video-studio-pro-ai` | `/worker/` | Workers AI / MeloTTS |
+| `hendy-video-studio-pro-mcp` | `/mcp/cloudflare/` | Stateless MCP |
+| `hendy-video-studio-pro-telegram` | `/example_bot/` | Telegram webhook + D1 |
 
-Telemetry is streamed over the same WebSocket connection.
+## Configuration authority
 
-## Capacitor
+`system-config/system.config.json` is the only source that should be edited for runtime topology, versions, ports, public URL, R2 metadata, Worker names, build/deploy commands, security secret names and editor defaults.
 
-The SOT drives `capacitor.config.ts` and includes Capacitor 8 dependencies. After the first install, initialize the native shells once:
+`system-config/scripts/sync-config.mjs` generates Wrangler configs, frontend runtime config, theme variables, PWA manifest and worker package toolchain pins.
 
-```bash
-npx cap add android
-npx cap add ios
-```
+## Service bindings
 
-Then use:
+The gateway declares `BACKEND`, `AI_EDGE`, `MCP` and `TELEGRAM`. These are internal Worker-to-Worker calls, not public URLs. Cloudflare Service Bindings provide this separation without requiring public routes.
 
-```bash
-npm run cap:sync:nominal
-```
+## Static assets
 
-Native platform projects are intentionally not fabricated by the generator. Once created by Capacitor, inspect and commit the Android/iOS projects as appropriate for the application.
+The gateway uses `assets.directory = ./frontend/dist` and SPA fallback. API/MCP/Telegram paths are handled by the Worker before the asset fallback.
+
+## Security boundaries
+
+- Secrets stay in Cloudflare Worker Secrets and local environment only.
+- R2 Account ID, bucket and endpoint are non-secret configuration.
+- Sandbox is loopback-only.
+- Telegram admin is controlled by server-side user ID allowlisting.
+- MCP is stateless and should be protected by the chosen authentication layer before exposing privileged tools.

@@ -1,26 +1,35 @@
-# Cloudflare Build/Deploy Fix — 2026-09-27
+# Cloudflare Workers Build Fix — v3.2.0
 
-## Dependency resolution
-The previous Workers Types error was fixed by pinning `@cloudflare/workers-types` to `5.20260926.1`.
+## Root cause addressed
 
-## Current deployment error
-The build/install stage now succeeds. The remaining failure is caused by running `npx wrangler deploy` from the monorepo root while Wrangler cannot identify the intended application.
+The old ZIP used Cloudflare Pages configuration (`pages_build_output_dir`) and a single deploy command that could try to deploy multiple Worker configs under the same connected Worker. The upgraded ZIP uses a Gateway Worker plus four dedicated Workers.
 
-The repository now includes a root `wrangler.jsonc` targeting `worker/src/index.ts`, plus:
-- `bun run deploy` → `wrangler deploy --config wrangler.jsonc`
-- `bun run worker:deploy` → deploy the Worker using its workspace config.
+## Required Workers Builds
 
-## Cloudflare Workers settings
-Use:
-`Build command: bun run build`
-`Deploy command: bun run deploy`
+Create five Workers Build projects from the same repository. Each service uses its own root directory and matching Wrangler `name`.
 
-Do not use `npm install` as the user build command because Cloudflare already ran `bun install`.
+```text
+/                    -> hendy-video-studio-pro
+/backend/            -> hendy-video-studio-pro-backend
+/worker/             -> hendy-video-studio-pro-ai
+/mcp/cloudflare/     -> hendy-video-studio-pro-mcp
+/example_bot/        -> hendy-video-studio-pro-telegram
+```
 
-## Cloudflare Pages
-Deploy the React editor separately:
-- Root directory: `frontend`
-- Build command: `bun run build`
-- Output directory: `dist`
+## Commands
 
-No production secrets are committed.
+Build is compile-only. Deploy is the only step that publishes a Worker. This prevents required Cloudflare secrets from blocking a compile-only build.
+
+Gateway:
+`bun run build`
+`bun run worker:deploy`
+
+Service Workers:
+`bun run build`
+`bunx wrangler deploy --config wrangler.jsonc`
+
+Cloudflare Workers Builds supports a separate root directory and build/deploy commands per connected Worker.
+
+## Static assets
+
+The Gateway uses Workers Static Assets (`frontend/dist`) and Service Bindings for internal routing. It is no longer a Pages-only deployment.

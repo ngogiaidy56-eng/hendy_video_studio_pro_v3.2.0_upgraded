@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS settings (
     value TEXT
 );
 
--- Dữ liệu cấu hình mặc định cho SOT v3.1.0
+-- Dữ liệu cấu hình mặc định cho SOT v3.2.0
 INSERT OR IGNORE INTO settings (key, value) VALUES ('ws_url', 'ws://127.0.0.1:8799/ws');
 INSERT OR IGNORE INTO settings (key, value) VALUES ('dry_run_status', 'CHỜ LỆNH');
 INSERT OR IGNORE INTO settings (key, value) VALUES ('sandbox_status', '🔴 NGOẠI TUYẾN');

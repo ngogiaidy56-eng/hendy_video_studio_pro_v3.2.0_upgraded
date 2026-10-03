@@ -1,4 +1,4 @@
-# Editor AI Pipeline v2.4.0
+# Editor AI Pipeline v3.2.0
 
 ## Browser Client
 - `Header.tsx`: session/status shell.

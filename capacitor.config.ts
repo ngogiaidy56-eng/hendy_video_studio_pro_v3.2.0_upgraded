@@ -1,14 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
-export const config: CapacitorConfig = {
+const config: CapacitorConfig = {
   appId: "com.aistudiopro.vietsub",
-  appName: "AI Studio Pro",
+  appName: "Hendy Video Studio Pro",
   webDir: 'dist',
   bundledWebRuntime: false,
-  server: {
-    androidScheme: 'https',
-    iosScheme: 'https'
-  }
+  server: { androidScheme: 'https', iosScheme: 'https' }
 };
 
 export default config;

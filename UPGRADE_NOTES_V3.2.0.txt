@@ -1,0 +1,96 @@
+HENDY VIDEO STUDIO PRO v3.2.0
+ZIP UPGRADE NOTES
+===============================
+
+MỤC TIÊU
+- Chuyển kiến trúc từ Pages/legacy sang Cloudflare Workers Gateway + Static Assets.
+- Chuẩn hóa 5 Workers trong monorepo với Root Directory riêng.
+- Đưa cấu hình về một SOT duy nhất: system-config/system.config.json.
+- Đồng bộ Build/Deploy/Watch paths cho Cloudflare Workers Builds.
+- Giảm dependency thừa của Telegram Worker.
+- Chuẩn hóa R2 metadata, secrets, health checks, PWA/offline và Service Bindings.
+
+5 WORKERS
+1. Gateway: hendy-video-studio-pro
+   Root: /
+   Build: bun run build
+   Deploy: bun run worker:deploy
+
+2. Backend: hendy-video-studio-pro-backend
+   Root: /backend/
+   Build: bun run build
+   Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+3. AI: hendy-video-studio-pro-ai
+   Root: /worker/
+   Build: bun run build
+   Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+4. MCP: hendy-video-studio-pro-mcp
+   Root: /mcp/cloudflare/
+   Build: bun run build
+   Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+5. Telegram: hendy-video-studio-pro-telegram
+   Root: /example_bot/
+   Build: bun run build
+   Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+SERVICE BINDINGS
+Gateway -> BACKEND -> hendy-video-studio-pro-backend
+Gateway -> AI_EDGE -> hendy-video-studio-pro-ai
+Gateway -> MCP -> hendy-video-studio-pro-mcp
+Gateway -> TELEGRAM -> hendy-video-studio-pro-telegram
+
+R2
+Bucket: hendy-video-studio-pro-media
+Account ID và endpoint nằm trong SOT dưới storage; Access Key/Secret Key KHÔNG nằm trong ZIP.
+
+SECRETS
+Backend:
+- GEMINI_API_KEY
+- TELEGRAM_BOT_TOKEN
+- R2_ACCESS_KEY_ID
+- R2_SECRET_ACCESS_KEY
+- ADMIN_USER_IDS
+- MCP_OTP_SECRET
+
+Telegram:
+- TELEGRAM_BOT_TOKEN
+- ADMIN_USER_IDS
+- MCP_OTP_SECRET
+- TELEGRAM_SECRET_TOKEN
+
+KHÔNG commit secrets vào Git hoặc frontend VITE_*.
+
+LOCAL
+- Prerequisites: Node >=22 <25, Bun 1.2.15.
+- Install: bun install
+- Unified server: bun run dev
+- Sandbox: bun run sandbox
+- Frontend: bun --cwd frontend run dev
+
+QUALITY COMMANDS
+- bun run config:validate
+- bun run config:dry-run -- --strict-dry-run
+- bun run typecheck
+- bun run build:all
+- bun run production:check
+
+BOOTSTRAP ORDER
+Backend -> AI -> MCP -> Telegram -> Gateway.
+Worker đích của Service Binding phải tồn tại trước Gateway.
+
+ĐÃ KIỂM TRA TRÊN BẢN ZIP NÀY
+- SOT validation: PASS
+- Strict SOT dry-run: PASS (28 managed targets)
+- JSON/JSONC parse: PASS
+- Node JS/MJS syntax: PASS
+- TypeScript syntax transpile check: PASS
+- Secret hygiene: PASS
+
+GIỚI HẠN MÔI TRƯỜNG ĐÓNG GÓI
+Môi trường tạo ZIP không có Bun executable và không có cache mạng/npm đầy đủ, vì vậy chưa chạy được full bun install + full TypeScript/Vite production build tại đây. Các kiểm tra cấu hình và syntax đã chạy thành công; build dependency đầy đủ nên chạy lại trong Cloudflare/GitHub bằng Bun 1.2.15.
+
+BẢO MẬT
+Các credential đã từng được gửi trong chat không được ghi vào ZIP. Hãy rotate/revoke credential đã lộ và nhập credential mới trực tiếp vào Cloudflare Secrets.

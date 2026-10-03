@@ -4,9 +4,6 @@ import { SystemLayout } from './generated/system-layout';
 import './generated/system-theme.css';
 import { SystemControlPanel } from './components/system/SystemControlPanel';
 import { PwaInstallBanner } from './components/system/PwaInstallBanner';
-import { UniversalPlatformModal } from './components/system/UniversalPlatformModal';
-import { InfrastructureConsole } from './components/system/InfrastructureConsole';
-import { MobileAppShell } from './components/mobile/MobileAppShell';
 import { Header } from './components/system/Header';
 import { AssetSidebar } from './components/editor/AssetSidebar';
 import { CanvasPreview } from './components/editor/CanvasPreview';
@@ -198,14 +195,6 @@ export default function App() {
   // Modal visibility states
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSubtitlesOpen, setIsSubtitlesOpen] = useState(false);
-  const [isUniversalModalOpen, setIsUniversalModalOpen] = useState(false);
-  const [isInfraModalOpen, setIsInfraModalOpen] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth < 820;
-    }
-    return false;
-  });
 
   // Undo / Redo stacks
   const undoStackRef = useRef<Project[]>([]);
@@ -478,86 +467,16 @@ export default function App() {
     }
   };
 
-  if (isMobileView) {
-    return (
-      <div className="min-h-screen bg-[#070b14]">
-        <MobileAppShell
-          project={state.project}
-          currentTimeMs={state.currentTimeMs}
-          selectedId={state.selectedId}
-          onSelectClip={id => dispatch({ type: 'select', id })}
-          onSeek={time => dispatch({ type: 'seek', time })}
-          onSplitClip={(id, splitAtMs) =>
-            dispatchWithHistory({ type: 'split_clip', id, splitAtMs })
-          }
-          onDeleteClip={id => dispatchWithHistory({ type: 'delete_clip', id })}
-          onDuplicateClip={id => dispatchWithHistory({ type: 'duplicate_clip', id })}
-          onOpenDesktopMode={() => setIsMobileView(false)}
-          onOpenUniversalModal={() => setIsUniversalModalOpen(true)}
-          onOpenInfraModal={() => setIsInfraModalOpen(true)}
-          onExportVideo={exportVideo}
-          onAutoGenerateSubtitles={async () => {
-            setStatus('ĐANG TẠO PHỤ ĐỀ AI...');
-            try {
-              const cues = [
-                { startMs: 0, endMs: 2500, text: 'Chào mừng bạn đến với Hendy Video Studio Pro' },
-                { startMs: 2500, endMs: 5000, text: 'Hỗ trợ đa nền tảng Windows, Android và iOS' },
-                { startMs: 5000, endMs: 7000, text: 'Biên tập video & Vietsub chuyên nghiệp' }
-              ];
-              const newClips: Clip[] = cues.map(c => ({
-                id: crypto.randomUUID(),
-                track: 2,
-                label: c.text,
-                kind: 'subtitle',
-                startMs: c.startMs,
-                endMs: c.endMs,
-                text: c.text
-              }));
-              dispatchWithHistory({ type: 'add_clips', clips: newClips });
-              setStatus('CHUẨN (NOMINAL)');
-            } catch {
-              setStatus('LỖI TẠO PHỤ ĐỀ');
-            }
-          }}
-          onUpdateProjectName={name =>
-            dispatchWithHistory({ type: 'update_project_meta', patch: { name } })
-          }
-          videoPreviewSlot={
-            <CanvasPreview
-              project={state.project}
-              currentTimeMs={state.currentTimeMs}
-              onSeek={time => dispatch({ type: 'seek', time })}
-            />
-          }
-        />
-
-        <UniversalPlatformModal
-          isOpen={isUniversalModalOpen}
-          onClose={() => setIsUniversalModalOpen(false)}
-        />
-        <InfrastructureConsole
-          isOpen={isInfraModalOpen}
-          onClose={() => setIsInfraModalOpen(false)}
-        />
-        <PwaInstallBanner />
-      </div>
-    );
-  }
-
   return (
     <SystemLayout>
       <div className="stack">
         <Header
-          version={SYSTEM_CONFIG.app?.version || (SYSTEM_CONFIG as any).system?.version || '3.1.0'}
+          version={SYSTEM_CONFIG.app?.version || (SYSTEM_CONFIG as any).system?.version || '3.2.0'}
           admin={admin}
           projectName={state.project.name}
           lastSavedAt={lastSavedAt}
           canUndo={historyCount.undo > 0}
           canRedo={historyCount.redo > 0}
-          isMobileView={false}
-          onToggleViewMode={() => setIsMobileView(true)}
-          onOpenUniversalModal={() => setIsUniversalModalOpen(true)}
-          onOpenInfraModal={() => setIsInfraModalOpen(true)}
           onUndo={handleUndo}
           onRedo={handleRedo}
           onOpenSettings={() => setIsSettingsOpen(true)}
@@ -734,14 +653,6 @@ export default function App() {
           }
         />
 
-        <UniversalPlatformModal
-          isOpen={isUniversalModalOpen}
-          onClose={() => setIsUniversalModalOpen(false)}
-        />
-        <InfrastructureConsole
-          isOpen={isInfraModalOpen}
-          onClose={() => setIsInfraModalOpen(false)}
-        />
         <PwaInstallBanner />
         <SystemControlPanel />
       </div>

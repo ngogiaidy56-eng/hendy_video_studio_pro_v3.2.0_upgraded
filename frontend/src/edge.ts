@@ -1,3 +1,5 @@
+import {SYSTEM_CONFIG_VERSION} from './generated/system-config';
+
 export interface Env {
   ASSETS: Fetcher;
   BACKEND: Fetcher;
@@ -6,26 +8,24 @@ export interface Env {
   TELEGRAM: Fetcher;
 }
 
-async function probe(fetcher:Fetcher, path:string, request:Request) {
-  try {
-    const u=new URL(request.url);
-    u.pathname=path;
-    const r=await fetcher.fetch(new Request(u.toString(),{method:'GET'}));
-    return {status:r.status,ok:r.ok};
-  } catch(e) {
-    return {status:0,ok:false,error:e instanceof Error?e.message:String(e)};
+const noStore={'cache-control':'no-store'};
+
+async function probe(fetcher:Fetcher,path:string,request:Request){
+  try{
+    const url=new URL(request.url);
+    url.pathname=path;
+    const response=await fetcher.fetch(new Request(url.toString(),{method:'GET',headers:{'cache-control':'no-cache'}}));
+    return {status:response.status,ok:response.ok};
+  }catch(error){
+    return {status:0,ok:false,error:error instanceof Error?error.message:String(error)};
   }
 }
 
 export default {
-  async fetch(request:Request,env:Env):Promise<Response> {
+  async fetch(request:Request,env:Env):Promise<Response>{
     const url=new URL(request.url);
-
-    if(url.pathname==='/health') {
-      return Response.json({ok:true,service:'gateway',version:'2.4.0',runtime:'cloudflare-workers'});
-    }
-
-    if(url.pathname==='/health/all') {
+    if(url.pathname==='/health') return Response.json({ok:true,service:'gateway',version:SYSTEM_CONFIG_VERSION,runtime:'cloudflare-workers'},{headers:noStore});
+    if(url.pathname==='/health/all'){
       const [backend,backendReady,ai,mcp,telegram]=await Promise.all([
         probe(env.BACKEND,'/health',request),
         probe(env.BACKEND,'/health/ready',request),
@@ -34,17 +34,13 @@ export default {
         probe(env.TELEGRAM,'/health',request)
       ]);
       const checks={gateway:{status:200,ok:true},backend,backendReady,ai,mcp,telegram};
-      return Response.json({ok:Object.values(checks).every(x=>x.ok),checks,version:'2.4.0'},{
-        status:Object.values(checks).every(x=>x.ok)?200:503,
-        headers:{'cache-control':'no-store'}
-      });
+      const ok=Object.values(checks).every(x=>x.ok);
+      return Response.json({ok,checks,version:SYSTEM_CONFIG_VERSION},{status:ok?200:503,headers:noStore});
     }
-
-    if(url.pathname==='/mcp' || url.pathname.startsWith('/mcp/')) return env.MCP.fetch(request);
-    if(url.pathname==='/telegram' || url.pathname.startsWith('/telegram/')) return env.TELEGRAM.fetch(request);
-    if(url.pathname==='/api/ai' || url.pathname.startsWith('/api/ai/')) return env.AI_EDGE.fetch(request);
-    if(url.pathname==='/api/' || url.pathname.startsWith('/api/')) return env.BACKEND.fetch(request);
-    if(url.pathname==='/tai-app') return env.BACKEND.fetch(request);
+    if(url.pathname==='/mcp'||url.pathname.startsWith('/mcp/')) return env.MCP.fetch(request);
+    if(url.pathname==='/telegram'||url.pathname.startsWith('/telegram/')) return env.TELEGRAM.fetch(request);
+    if(url.pathname==='/api/ai'||url.pathname.startsWith('/api/ai/')) return env.AI_EDGE.fetch(request);
+    if(url.pathname==='/api'||url.pathname.startsWith('/api/')) return env.BACKEND.fetch(request);
     return env.ASSETS.fetch(request);
   }
 } satisfies ExportedHandler<Env>;

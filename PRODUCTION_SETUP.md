@@ -1,75 +1,71 @@
-# Hendy Video Studio Pro v2.4.0 — Production Setup
+# Hendy Video Studio Pro v3.2.0 — Production Setup
 
-## Cloudflare Workers Build
-Build command: `bun run build`
-Deploy command: `bun run deploy`
+## 1. Tạo 5 Workers Builds
 
-This repository is a Workers monorepo. Cloudflare Workers Builds deploys the Worker connected to that build project; Cloudflare documents that the connected Worker name must match the Wrangler Worker name, and monorepos should connect each Worker separately. The deploy script detects the Workers Builds context (`WORKERS_CI=1`) and deploys only the top-level gateway Worker from this repository. Local/manual `bun run deploy` still deploys all five targets.
+Kết nối cùng repository `ngogiaidy56-eng/hendy-video-studio-pro` tới 5 Workers riêng. Cloudflare Workers Builds cho phép mỗi Worker có root directory và watch paths riêng trong monorepo.
 
-Create/connect five Cloudflare Workers Build projects to this repository (one per Worker):
-- root: `hendy-video-studio-pro`
-- backend: `hendy-video-studio-pro-backend`
-- AI: `hendy-video-studio-pro-ai`
-- MCP: `hendy-video-studio-pro-mcp`
-- Telegram: `hendy-video-studio-pro-telegram`
+| Worker | Root directory | Build command | Deploy command | Watch paths |
+|---|---|---|---|---|
+| `hendy-video-studio-pro` | `/` | `bun run build` | `bun run worker:deploy` | `frontend/**`, `system-config/**`, `package.json`, `bun.lock`, `wrangler.jsonc` |
+| `hendy-video-studio-pro-backend` | `/backend/` | `bun run build` | `bunx wrangler deploy --config wrangler.jsonc` | `backend/**`, `shared/**`, `system-config/**` |
+| `hendy-video-studio-pro-ai` | `/worker/` | `bun run build` | `bunx wrangler deploy --config wrangler.jsonc` | `worker/**`, `system-config/**` |
+| `hendy-video-studio-pro-mcp` | `/mcp/cloudflare/` | `bun run build` | `bunx wrangler deploy --config wrangler.jsonc` | `mcp/cloudflare/**`, `system-config/**` |
+| `hendy-video-studio-pro-telegram` | `/example_bot/` | `bun run build` | `bunx wrangler deploy --config wrangler.jsonc` | `example_bot/**`, `system-config/**` |
 
-For each project, make sure the connected Worker name matches its Wrangler `name` value. The root Worker serves React static assets and proxies `/api/*`, `/mcp` and `/telegram/*` to dedicated Workers.
+Root directory là thư mục chứa `package.json` và `wrangler.jsonc` của từng Worker. Không dùng Pages project cũ cho Gateway.
 
-## Runtime Workers
-- `hendy-video-studio-pro` — React 19 gateway + static assets
-- `hendy-video-studio-pro-backend` — Express 5 API on Workers
-- `hendy-video-studio-pro-ai` — Cloudflare Workers AI / MeloTTS
-- `hendy-video-studio-pro-mcp` — MCP Streamable HTTP
-- `hendy-video-studio-pro-telegram` — Telegram webhook
+## 2. Gateway
 
-## Backend Secrets
-Add these as Cloudflare Worker Secrets on `hendy-video-studio-pro-backend`:
-- `GEMINI_API_KEY`
-- `TELEGRAM_BOT_TOKEN`
-- `R2_ACCESS_KEY_ID`
-- `R2_SECRET_ACCESS_KEY`
-- `ADMIN_USER_IDS`
-- `MCP_OTP_SECRET`
+Gateway sử dụng Cloudflare Workers Static Assets và Service Bindings. Static assets được lấy từ `./frontend/dist`; `/api/*`, `/mcp/*`, `/telegram/*` chạy qua Worker trước khi Assets fallback.
 
-R2 account ID and endpoint are non-secret SOT variables and are generated into the backend Wrangler config.
+## 3. Backend secrets
 
-`R2_BUCKET` is generated from SOT `storage.bucketName`. Set it to the real existing R2 bucket.
+Đặt trực tiếp trong Cloudflare Worker Secrets:
 
-## Telegram
-Add `TELEGRAM_BOT_TOKEN` and `MCP_OTP_SECRET` as Secrets on `hendy-video-studio-pro-telegram`.
+```text
+GEMINI_API_KEY
+TELEGRAM_BOT_TOKEN
+R2_ACCESS_KEY_ID
+R2_SECRET_ACCESS_KEY
+ADMIN_USER_IDS
+MCP_OTP_SECRET
+```
 
-Set the Telegram webhook to:
+Telegram Worker:
+
+```text
+TELEGRAM_BOT_TOKEN
+ADMIN_USER_IDS
+MCP_OTP_SECRET
+TELEGRAM_SECRET_TOKEN
+```
+
+Không ghi các giá trị này vào Git, ZIP source hoặc frontend.
+
+## 4. R2
+
+SOT đang cấu hình bucket `hendy-video-studio-pro-media`, Account ID và S3 endpoint. Access Key/Secret Key chỉ là Cloudflare Worker Secrets.
+
+## 5. Telegram webhook
+
+Production webhook:
+
 `https://hendy-video-studio-pro.ngogiaidy56.workers.dev/telegram/webhook`
 
-Run `node system-config/scripts/set-telegram-webhook.mjs` with `TELEGRAM_BOT_TOKEN` and `TELEGRAM_WEBHOOK_URL` in the environment.
+Chạy `node system-config/scripts/set-telegram-webhook.mjs` sau khi đặt `TELEGRAM_BOT_TOKEN` và `TELEGRAM_WEBHOOK_URL` trong môi trường deploy.
 
-## R2
-Create the R2 bucket named by `storage.bucketName`, or change the SOT to an existing bucket.
+## 6. Kiểm tra sau deploy
 
-## E2E Check
-After deployment:
-`bun run production:check`
+```bash
+npm run production:check
+```
 
-Direct health endpoint:
+Gateway health:
+
+`https://hendy-video-studio-pro.ngogiaidy56.workers.dev/health`
+
+Full health:
+
 `https://hendy-video-studio-pro.ngogiaidy56.workers.dev/health/all`
 
-Expected:
-`PRODUCTION E2E HEALTH: PASS`
-
-The readiness check is strict: the backend must report Gemini, Telegram and R2 credentials as configured.
-
-## Main routes
-- `/api/gemini/subtitles`
-- `/api/gemini/tts`
-- `/api/gemini/transcribe`
-- `/api/gemini/audio-mix`
-- `/api/gemini/create-video`
-- `/api/gemini/enhance-vietnamese`
-- `/api/cloudflare/tts`
-- `/api/v1/auth/telegram/verify`
-- `/api/v1/media/upload`
-- `/api/v1/media/audio/transcribe`
-- `/api/v1/media/video/transcribe`
-- `/api/v1/media/image/translate`
-- `/mcp`
-- `/telegram/webhook`
+`health/all` sẽ kiểm tra Gateway, Backend readiness, AI, MCP và Telegram.

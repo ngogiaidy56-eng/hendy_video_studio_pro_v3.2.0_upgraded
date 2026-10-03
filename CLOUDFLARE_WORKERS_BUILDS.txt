@@ -1,0 +1,73 @@
+HENDY VIDEO STUDIO PRO v3.2.0
+CLOUDFLARE WORKERS BUILDS SETUP
+================================
+
+Repository
+----------
+ngogiaidy56-eng/hendy-video-studio-pro
+Branch: main
+
+WORKER 1 — GATEWAY
+-------------------
+Worker: hendy-video-studio-pro
+Root: /
+Build: bun run build
+Deploy: bun run worker:deploy
+Watch: frontend/**, system-config/**, package.json, bun.lock, wrangler.jsonc
+
+WORKER 2 — BACKEND
+-------------------
+Worker: hendy-video-studio-pro-backend
+Root: /backend/
+Build: bun run build
+Deploy: bunx wrangler deploy --config wrangler.jsonc
+Watch: backend/**, shared/**, system-config/**
+Secrets: GEMINI_API_KEY, TELEGRAM_BOT_TOKEN, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, ADMIN_USER_IDS, MCP_OTP_SECRET
+
+WORKER 3 — AI
+---------------
+Worker: hendy-video-studio-pro-ai
+Root: /worker/
+Build: bun run build
+Deploy: bunx wrangler deploy --config wrangler.jsonc
+Watch: worker/**, system-config/**
+Binding: AI
+
+WORKER 4 — MCP
+----------------
+Worker: hendy-video-studio-pro-mcp
+Root: /mcp/cloudflare/
+Build: bun run build
+Deploy: bunx wrangler deploy --config wrangler.jsonc
+Watch: mcp/cloudflare/**, system-config/**
+Route: /mcp
+
+WORKER 5 — TELEGRAM
+--------------------
+Worker: hendy-video-studio-pro-telegram
+Root: /example_bot/
+Build: bun run build
+Deploy: bunx wrangler deploy --config wrangler.jsonc
+Watch: example_bot/**, system-config/**
+Secrets: TELEGRAM_BOT_TOKEN, ADMIN_USER_IDS, MCP_OTP_SECRET, TELEGRAM_SECRET_TOKEN
+D1 binding: DB
+
+GATEWAY ROUTES
+--------------
+/health           -> Gateway health
+/health/all       -> Gateway + Backend + AI + MCP + Telegram health
+/api/*            -> Backend
+/api/ai/*         -> AI Worker
+/mcp/*            -> MCP Worker
+/telegram/*       -> Telegram Worker
+other paths      -> React Static Assets
+
+LOCAL
+-----
+Unified server: http://127.0.0.1:3000
+Vite:           http://127.0.0.1:5173
+Sandbox:         ws://127.0.0.1:8799/ws
+
+SECURITY
+--------
+Do NOT put API keys, Telegram bot tokens, R2 access keys or OTP secrets in this file, Git or frontend code. Set them in Cloudflare Worker Secrets.

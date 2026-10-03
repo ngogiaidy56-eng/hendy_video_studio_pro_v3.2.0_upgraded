@@ -1,31 +1,35 @@
-# System Configuration — Single Source of Truth
+# System Config v3.2.0 — Single Source of Truth
 
-`system-config/system.config.json` is the root configuration authority for the project.
+`system-config/system.config.json` là nguồn cấu hình chuẩn duy nhất cho Hendy Video Studio Pro.
 
-Edit that file instead of hand-editing managed configuration files. Run:
+## Quy trình chuẩn
 
 ```bash
-npm run system:dry-run
-npm run system:sync
-npm run system:sandbox
+npm run config:validate
+npm run config:dry-run
+npm run config:sync
+npm run release:gate
 ```
 
-The sync process updates the managed subset of:
+`config:validate` kiểm tra cấu trúc SOT.
+`config:dry-run` phát hiện drift trước khi sync.
+`config:sync` tạo lại các file được quản lý.
+`release:gate` chạy typecheck + build cho các workspace trước khi deploy production.
 
-- `package.json`
-- `capacitor.config.ts`
-- `public/manifest.json`
-- `public/_headers`
-- `wrangler.jsonc`
-- `src/generated/system-config.ts`
-- `src/generated/system-theme.css`
+## Cloudflare monorepo
 
-`system:sandbox` starts an independent local WebSocket validation gateway. The gateway can run dry-run, apply safe local auto-fixes, re-validate, and broadcast `SYSTEM_CONFIG_SYNCED` only after the release gate reaches `NOMINAL`.
+Có 5 Workers:
 
-NOMINAL means all automated checks passed. It is a release gate, not a guarantee that every runtime condition is safe.
+- `hendy-video-studio-pro` — Gateway + React Static Assets
+- `hendy-video-studio-pro-backend` — Express API + Gemini + R2
+- `hendy-video-studio-pro-ai` — Workers AI / MeloTTS
+- `hendy-video-studio-pro-mcp` — MCP stateless Streamable HTTP
+- `hendy-video-studio-pro-telegram` — Telegram Webhook + D1
 
-### Tự động đồng bộ khi sửa Source of Truth
+Mỗi Worker có `rootDirectory`, `buildCommand`, `deployCommand` và `watchPaths` trong SOT để Dashboard Cloudflare dùng cùng một chuẩn.
 
-Chạy `npm run system:sandbox`. Gateway sẽ theo dõi `system-config/system.config.json`. Khi file này thay đổi, sandbox sẽ debounce thay đổi, auto-patch các lỗi cấu hình an toàn, validate, strict dry-run, chạy release gate (TypeScript + Vite build), sau đó mới sync các target và phát `SYSTEM_CONFIG_SYNCED` qua WebSocket. Nếu gate thất bại, broadcast đồng bộ bị chặn.
+## Security
 
-`NOMINAL` chỉ có nghĩa là toàn bộ kiểm tra tự động đã vượt qua; nó không phải chứng nhận an toàn tuyệt đối cho mọi điều kiện runtime.
+Không lưu API key, bot token, R2 Access Key/Secret hoặc OTP secret trong SOT/frontend bundle. SOT chỉ lưu tên secret và thông tin non-secret như Account ID, bucket, endpoint.
+
+Sandbox WebSocket `127.0.0.1:8799/ws` chỉ dành cho local development.

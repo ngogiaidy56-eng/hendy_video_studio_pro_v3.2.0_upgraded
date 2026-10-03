@@ -1,0 +1,354 @@
+HENDY VIDEO STUDIO PRO v3.2.0 — UPGRADED SYSTEM MAP + USAGE
+==============================================================================
+
+1. ARCHITECTURE
+
+Browser / PWA / Telegram Mini App
+        │
+        ▼
+hendy-video-studio-pro  [Gateway Worker]
+        ├── React 19 static assets (Cloudflare Static Assets)
+        ├── /api/*      ──Service Binding──> BACKEND
+        ├── /api/ai/*  ──Service Binding──> AI_EDGE
+        ├── /mcp/*     ──Service Binding──> MCP
+        └── /telegram/*──Service Binding──> TELEGRAM
+
+BACKEND Worker
+  ├── Express API / auth / upload / AI orchestration
+  ├── Gemini API
+  └── Cloudflare R2 (S3 compatible)
+
+AI Worker
+  └── Cloudflare Workers AI / MeloTTS
+
+MCP Worker
+  └── Stateless Streamable HTTP MCP (/mcp)
+
+TELEGRAM Worker
+  ├── Telegram webhook
+  ├── Mini App/admin commands
+  └── D1 binding DB
+
+LOCAL SANDBOX
+  └── 127.0.0.1:8799/ws  (public access disabled)
+
+2. DIRECTORY TREE
+
+├── .github/
+│   └── workflows/
+│       └── system-gate.yml
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   └── downloadController.ts
+│   │   ├── routes/
+│   │   │   ├── auth.ts
+│   │   │   ├── cloudflare.ts
+│   │   │   ├── gemini.ts
+│   │   │   ├── media.ts
+│   │   │   └── projects.ts
+│   │   ├── services/
+│   │   │   ├── audioMixOptimizer.ts
+│   │   │   ├── audioTranscriber.ts
+│   │   │   ├── auth.ts
+│   │   │   ├── cloudflareTts.ts
+│   │   │   ├── extractor.ts
+│   │   │   ├── geminiClient.ts
+│   │   │   ├── geminiTts.ts
+│   │   │   ├── imageTranslator.ts
+│   │   │   ├── otpService.ts
+│   │   │   ├── r2Storage.ts
+│   │   │   ├── recoveryService.ts
+│   │   │   ├── storyboardGenerator.ts
+│   │   │   ├── telegramAuth.ts
+│   │   │   ├── videoTranscriber.ts
+│   │   │   ├── vietnameseEnhancer.ts
+│   │   │   └── vietsubAi.ts
+│   │   ├── app.ts
+│   │   ├── server.ts
+│   │   └── worker.ts
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── wrangler.jsonc
+├── docs/
+│   └── EDITOR_AI_PIPELINE.md
+├── example_bot/
+│   ├── docs/
+│   │   └── tgcloud-sdk.md
+│   ├── handlers/
+│   │   ├── callback_query.js
+│   │   ├── message.js
+│   │   └── webhook.js
+│   ├── src/
+│   │   └── worker.ts
+│   ├── package.json
+│   ├── README.md
+│   ├── schema.js
+│   ├── schema.sql
+│   ├── tsconfig.json
+│   └── wrangler.jsonc
+├── frontend/
+│   ├── public/
+│   │   ├── _headers
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── sw.js
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── editor/
+│   │   │   │   ├── AssetSidebar.tsx
+│   │   │   │   ├── AudioMixer.tsx
+│   │   │   │   ├── CanvasPreview.tsx
+│   │   │   │   ├── InspectorPanel.tsx
+│   │   │   │   ├── MultiChannelAudioMixer.tsx
+│   │   │   │   ├── ProjectSettingsModal.tsx
+│   │   │   │   ├── SubtitleTableModal.tsx
+│   │   │   │   └── Timeline.tsx
+│   │   │   └── system/
+│   │   │       ├── Header.tsx
+│   │   │       ├── PwaInstallBanner.tsx
+│   │   │       └── SystemControlPanel.tsx
+│   │   ├── generated/
+│   │   │   ├── system-config.ts
+│   │   │   ├── system-env.ts
+│   │   │   ├── system-layout.tsx
+│   │   │   └── system-theme.css
+│   │   ├── services/
+│   │   │   ├── ai.ts
+│   │   │   ├── api.ts
+│   │   │   ├── projectStorage.ts
+│   │   │   ├── renderManifest.ts
+│   │   │   └── telegram.ts
+│   │   ├── types/
+│   │   │   └── project.ts
+│   │   ├── utils/
+│   │   │   ├── appDownloader.ts
+│   │   │   ├── audioEngine.ts
+│   │   │   ├── frameInjector.ts
+│   │   │   ├── subBurner.ts
+│   │   │   ├── subtitleExporter.ts
+│   │   │   ├── undoEngine.ts
+│   │   │   └── videoRenderer.ts
+│   │   ├── app.css
+│   │   ├── App.tsx
+│   │   ├── edge.ts
+│   │   ├── main.tsx
+│   │   └── vite-env.d.ts
+│   ├── index.html
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+├── mcp/
+│   └── cloudflare/
+│       ├── src/
+│       │   ├── policies/
+│       │   │   └── allowlist.ts
+│       │   ├── tools/
+│       │   │   ├── cloudflare.ts
+│       │   │   ├── config.ts
+│       │   │   ├── github.ts
+│       │   │   ├── observability.ts
+│       │   │   └── sandbox.ts
+│       │   ├── index.ts
+│       │   ├── runtime-config.ts
+│       │   └── worker.ts
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── wrangler.jsonc
+├── public/
+│   ├── _headers
+│   ├── manifest.json
+│   └── sw.js
+├── shared/
+│   ├── constants/
+│   │   └── limits.ts
+│   └── types/
+│       ├── config.ts
+│       ├── media.ts
+│       ├── render.ts
+│       └── timeline.ts
+├── src/
+│   └── generated/
+│       ├── system-config.ts
+│       └── system-theme.css
+├── system-config/
+│   ├── sandbox/
+│   │   ├── dryRun.mjs
+│   │   ├── policy.mjs
+│   │   └── server.mjs
+│   ├── schema/
+│   │   └── system-config.schema.json
+│   ├── scripts/
+│   │   ├── deploy-all.mjs
+│   │   ├── export-source-md.mjs
+│   │   ├── production-check.mjs
+│   │   ├── push-env-to-cf.mjs
+│   │   ├── release-gate.mjs
+│   │   ├── set-telegram-webhook.mjs
+│   │   ├── sync-config.mjs
+│   │   └── validate-config.mjs
+│   ├── package.json
+│   ├── README.md
+│   └── system.config.json
+├── worker/
+│   ├── src/
+│   │   └── index.ts
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── wrangler.jsonc
+├── .env.example
+├── .gitignore
+├── BUILD_ARTIFACTS.md
+├── bun.lock
+├── capacitor.config.ts
+├── CLOUDFLARE_BUILD_FIX.md
+├── CLOUDFLARE_WORKERS_BUILDS.txt
+├── DEPLOYMENT_MATRIX.md
+├── FILE_LIST.txt
+├── index.html
+├── metadata.json
+├── package.json
+├── PRODUCTION_SETUP.md
+├── README.md
+├── server.ts
+├── SYSTEM_SOT_ARCHITECTURE.md
+├── SYSTEM_SOT_SOURCE_CODE.md
+└── wrangler.jsonc
+
+3. SOURCE OF TRUTH
+
+- Config: system-config/system.config.json
+- Schema: system-config/schema/system-config.schema.json
+- Sync: node system-config/scripts/sync-config.mjs --sync
+- Validate: node system-config/scripts/validate-config.mjs
+- Strict drift check: node system-config/scripts/sync-config.mjs --dry-run --strict-dry-run
+
+SOT VERSION: 3.2.0
+PUBLIC APP: https://hendy-video-studio-pro.ngogiaidy56.workers.dev
+R2 BUCKET: hendy-video-studio-pro-media
+R2 ENDPOINT: https://918ff2f016938fc978ed23b96505b21e.r2.cloudflarestorage.com
+
+4. LOCAL DEVELOPMENT
+
+Prerequisites: Node >=22 <25 and Bun 1.2.15.
+
+Install:
+  bun install
+
+Run unified local server:
+  bun run dev
+
+Sandbox only:
+  bun run sandbox
+
+Frontend only:
+  bun --cwd frontend run dev
+
+5. RELEASE GATE
+
+Fast configuration check:
+  bun run config:validate
+  bun run config:dry-run -- --strict-dry-run
+
+Full gate:
+  bun run release:gate
+
+Note: the provided build environment used for this upgrade did not have Bun or a network-backed npm/Bun cache, so a full dependency install/typecheck/build was not executed here. Static/config/syntax checks were executed.
+
+6. CLOUDFLARE WORKERS BUILDS — 5 PROJECTS
+
+Gateway
+  Worker: hendy-video-studio-pro
+  Root: /
+  Build: bun run build
+  Deploy: bun run worker:deploy
+
+Backend
+  Worker: hendy-video-studio-pro-backend
+  Root: /backend/
+  Build: bun run build
+  Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+AI
+  Worker: hendy-video-studio-pro-ai
+  Root: /worker/
+  Build: bun run build
+  Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+MCP
+  Worker: hendy-video-studio-pro-mcp
+  Root: /mcp/cloudflare/
+  Build: bun run build
+  Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+Telegram
+  Worker: hendy-video-studio-pro-telegram
+  Root: /example_bot/
+  Build: bun run build
+  Deploy: bunx wrangler deploy --config wrangler.jsonc
+
+Deploy order for a first bootstrap:
+  Backend → AI → MCP → Telegram → Gateway
+
+7. REQUIRED SECRETS
+
+Backend:
+  GEMINI_API_KEY
+  TELEGRAM_BOT_TOKEN
+  R2_ACCESS_KEY_ID
+  R2_SECRET_ACCESS_KEY
+  ADMIN_USER_IDS
+  MCP_OTP_SECRET
+
+Telegram:
+  TELEGRAM_BOT_TOKEN
+  ADMIN_USER_IDS
+  MCP_OTP_SECRET
+  TELEGRAM_SECRET_TOKEN
+
+Never place these values in Git, frontend VITE_* variables, or this ZIP.
+
+8. R2 CONFIG
+
+Non-secret metadata kept in SOT:
+  accountId: 918ff2f016938fc978ed23b96505b21e
+  endpoint: https://918ff2f016938fc978ed23b96505b21e.r2.cloudflarestorage.com
+  bucket: hendy-video-studio-pro-media
+
+Secrets must be entered with Cloudflare Worker Secrets / Variables. Do not paste new credentials into chat.
+
+9. API / ROUTING
+
+  /health            → gateway health
+  /health/all        → gateway probes all four child Workers
+  /api/*             → backend
+  /api/ai/*          → AI Worker
+  /mcp               → MCP Worker
+  /mcp/*             → MCP Worker
+  /telegram/*        → Telegram Worker
+
+10. PWA / OFFLINE
+
+- Service worker caches shell assets only.
+- /api, /mcp and /telegram are explicitly bypassed by offline cache.
+- Navigation falls back to cached / when offline.
+- PWA manifest is generated from SOT.
+
+11. QUALITY/SANITY CHECKS PERFORMED
+
+- SOT validation: PASS
+- Strict configuration drift check: PASS (28 managed targets)
+- JS/MJS syntax check: PASS
+- TypeScript syntax transpile check: PASS
+- JSON/JSONC parsing: PASS
+- Secret hygiene scan: PASS (no real credential values in package)
+
+12. CLOUDFlARE NOTES
+
+- Each child Worker must exist before Gateway Service Bindings can deploy.
+- Each Workers Build project uses the same GitHub repo with a different root directory.
+- Keep Worker names exactly equal to Wrangler "name" fields.
+- Do not use a legacy Pages deployment for the Gateway.
+
+Generated: 2026-10-02T14:29:44

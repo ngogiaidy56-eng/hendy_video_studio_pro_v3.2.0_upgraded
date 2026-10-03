@@ -18,7 +18,8 @@ function walk(dir) {
   return files;
 }
 const files=walk(root).sort();
-let md=`# Hendy Video Studio Pro v2.4.0 — Full Source Snapshot\n\nGenerated from the repository working tree. Secrets, node_modules, dist, temp files and binary production artifacts are excluded.\n\n## File index\n\n${files.map(f=>`- \`${f}\``).join('\n')}\n\n`;
+const version = (() => { try { return JSON.parse(fs.readFileSync(path.join(root,'system-config/system.config.json'),'utf8')).app.version; } catch { return 'unknown'; } })();
+let md=`# Hendy Video Studio Pro v${version} — Full Source Snapshot\n\nGenerated from the repository working tree. Secrets, node_modules, dist, temp files and binary production artifacts are excluded.\n\n## File index\n\n${files.map(f=>`- \`${f}\``).join('\n')}\n\n`;
 for (const rel of files) {
   const content=fs.readFileSync(path.join(root,rel),'utf8').replace(/```/g,'``\\`');
   const lang=path.extname(rel).slice(1) || (rel.endsWith('Dockerfile')?'dockerfile':'text');
