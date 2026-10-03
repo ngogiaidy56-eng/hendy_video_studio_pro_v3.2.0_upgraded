@@ -1,0 +1,17 @@
+{
+  "name": "@hendy/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "prebuild": "node ../system-config/scripts/sync-config.mjs --sync",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "deploy": "wrangler deploy --config wrangler.jsonc"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260927.1",
+    "typescript": "^5.9.3",
+    "wrangler": "4.141.0"
+  }
+}

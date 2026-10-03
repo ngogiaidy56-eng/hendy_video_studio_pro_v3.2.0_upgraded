@@ -1,0 +1,10 @@
+{
+  "name": "@hendy/system-config",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-config.mjs",
+    "sync": "node scripts/sync-config.mjs"
+  },
+  "dependencies": {}
+}
