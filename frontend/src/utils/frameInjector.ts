@@ -1,2 +1,0 @@
-import type {Clip} from '../types/project';
-export function injectTransitionFrames(clips:Clip[],gapSeconds=1.5):Clip[]{const sorted=[...clips].sort((a,b)=>a.startMs-b.startMs);const out:Clip[]=[];for(let i=0;i<sorted.length;i++){const cur=sorted[i];out.push(cur);const next=sorted[i+1];if(next&&cur.endMs<next.startMs && (next.startMs-cur.endMs)/1000>=gapSeconds){out.push({id:`transition-${cur.id}-${next.id}`,track:cur.track,kind:'transition',startMs:cur.endMs,endMs:next.startMs,label:'Transition'});}}return out;}
